@@ -8,7 +8,7 @@ streamlit
 langchain_community
 langserve
 fastapi
-uvicorn
+gunicorn==21.2.0
 sse_starlette
 bs4
 pypdf
