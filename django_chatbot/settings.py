@@ -74,10 +74,20 @@ WSGI_APPLICATION = 'django_chatbot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',  # Database engine
+        'NAME': 'u913411133_buddy',  # Database name
+        'USER': 'u913411133_badmin',  # Database user
+        'PASSWORD': 'aJ9#eb66O',  # Database password
+        'HOST': '89.117.157.241',  # Database host
+        'PORT': '3306',  # Database port
     }
 }
 
