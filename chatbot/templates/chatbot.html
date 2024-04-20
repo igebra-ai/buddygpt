@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<style>
+    body, html {
+      height: 100%;
+    }
+
+    .messages-box {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .messages-list {
+      padding-left: 0;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      list-style: none;
+    }
+
+    .message-text {
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .sent {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+    }
+
+    .received {
+      background-color: #f1f0f0;
+      align-self: flex-start;
+    }
+
+    .message-form {
+      /*display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: #f8f9fa;*/
+      width: 100%;
+      padding: 9px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      border-color: #ffffff;
+      font-family: poppins;
+
+    }
+
+    .message-input {
+      flex: 1;
+      border-radius: 0;
+      border-right: none;
+    }
+
+    .btn-send {
+      border-radius: 4px;
+      background-color: #dc3265;
+      color: #ffffff;
+      cursor: pointer;
+      border-color: #dc3265;
+      box-shadow: 0 1px 10px rgba(202, 20, 87, 0.759);
+    }
+    .btn-send:hover {
+    background-color: #c9c9c9;
+    color: #dc3265;
+    border-color: #dc3265;
+  }
+
+    .chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      align-items: center; /* Center content horizontally */
+      /*padding-top: 55px;*/
+      padding-left: 250px;
+     /* padding-bottom: 10px;*/
+     
+    }
+    .main-container {
+    display: flex;
+    height: 100%;
+    }
+
+    .card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid transparent rgb(255, 255, 255);
+    width: 100%;}
+
+    .form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    box-shadow: 0px 1px 10px #dc3265;
+    /*transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;*/
+}
+
+.navbar {
+  display: flex;
+  background-color: #efefef; /* Background color */
+  width:100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+ 
+}
+
+.navbar-nav {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.nav-item {
+  margin-right: 10px; /* Adjust the spacing between nav items */
+}
+
+.nav-link {
+  color: #f44067; /* Text color */
+  text-decoration: none;
+  padding: 10px;
+  font-weight: bold;
+  margin-right: 5px; /* Adjust as needed */
+  padding-left: 10; /* Removes padding on the left */
+  padding-right: 0;
+}
+
+.nav-link:hover {
+  background-color: #cccccc; /* Hover background color */
+  color:#dc3265
+}
+
+
+
+    /*container for sidebar*/
+  </style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-container">
+  {% include 'sidebar.html' %}
+  
+
+<div class="chat-container">
+  <div class="card flex-grow-1 ">
+    <nav class="navbar">
+      {% if user.is_authenticated %}
+      <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+      <div>Welcome, {{user.fname}}
+      <a class="nav-link" style="margin-left: auto;font-size: 20px;" href="logout">Logout</a></div>
+      {% else %}
+      <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+      <a class="nav-link" style="margin-left;" href="signin">Login</a>
+      <a class="nav-link"  style="margin-left;" href="register">Register</a>
+      {% endif %}
+  </nav>
+  <div class="card-body messages-box">
+      
+    <div class="text">
+      <a href="{% url 'chat' %}">
+        <svg fill="#000000" viewBox="0 0 24 24" width="48" height="48" role="img" xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;">
+          <title>Chatbot</title>
+          <path d="M12 .04a1.743 1.743 0 0 0-.537 3.401l-.631 2.579H2.456A2.456 2.456 0 0 0 0 8.476v13.029a2.456 2.456 0 0 0 2.456 2.456h19.088c1.356 0 2.456-1.1 2.456-2.456V8.476c0-1.356-1.1-2.456-2.456-2.456h-8.403l-.616-2.575A1.743 1.743 0 0 0 11.999.04zM3.933 7.881h16.136c1.101 0 1.994.893 1.994 1.994v10.117a1.994 1.994 0 0 1-1.994 1.994H3.933a1.994 1.994 0 0 1-1.994-1.994V9.875c0-1.101.893-1.994 1.994-1.994zm3.254 2.312a4.575 4.575 0 1 0 0 9.15 4.575 4.575 0 0 0 0-9.15zm9.743 0a4.575 4.575 0 1 0 0 9.15 4.575 4.575 0 0 0 0-9.15zm-9.743 1.07a3.506 3.506 0 1 1 0 7.011 3.506 3.506 0 0 1 0-7.011zm9.743 0a3.506 3.506 0 1 1 0 7.011 3.506 3.506 0 0 1 0-7.011zm-9.743 1.663a1.843 1.843 0 1 0 0 3.686 1.843 1.843 0 0 0 0-3.686zm9.743 0a1.843 1.843 0 1 0 0 3.686 1.843 1.843 0 0 0 0-3.686zm-6.927 6.5v2.159h.706v-2.159h-.706zm1.077 0v2.159h.705v-2.159h-.705zm1.076 0v2.159h.706v-2.159h-.706zm1.077 0v2.159h.706v-2.159h-.706zm1.077.03v2.1a1.08 1.08 0 0 0 .829-1.049v-.001c0-.51-.354-.937-.829-1.05zm-4.678.028a1.08 1.08 0 0 0-.731 1.021v.001c0 .474.306.876.731 1.021v-2.043z"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+    
+    <br><br>
+    <br><br>
+    <br><br>
+  </div>
+  
+</div>
+</div>
+
+
+{% endblock %}

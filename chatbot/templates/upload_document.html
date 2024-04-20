@@ -1,0 +1,188 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add your head content here -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #6e6d6d;
+            padding-top: 60px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .content {
+            flex: 1;
+            padding: 40px 60px 20px 320px;
+        }
+        .uploaded_content {
+            flex: 1;
+            padding: 40px 120px 20px 0px;
+        }
+        /* Updated table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            padding: 0 20px; /* Padding added here */
+        }
+
+        th, td {
+            border: none; /* Remove default borders */
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e9e9e9;
+            border-bottom: 8px solid white; /* 8px white border at the bottom of header */
+        }
+
+        tbody tr {
+            background-color: #f9f9f9; /* Set background color for tbody rows */
+            border-bottom: 4px solid white; /* 8px white border at the bottom of rows */
+        }
+
+        /* Adjust column widths */
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 5%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 19%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 19%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 19%;
+        }
+
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 19%;
+        }
+
+        th:nth-child(6),
+        td:nth-child(6) {
+            width: 19%;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .view-link {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            width: 120px;
+            margin-right: 0px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="file"] {
+            width: 200px;
+            height: 15px; /* Adjust height as needed */
+            margin-left: -50px;
+            border-radius: 5px; /* Rounded corners */
+            border: 1px solid #ccc; /* Border color */
+            padding: 5px; /* Padding inside the input field */
+        }
+
+        .form-group button {
+            margin-left: 10px;
+            background-color: #cc1f51; /* Custom button color */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #a4163e; /* Darker color on hover */
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    {% include 'sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Upload Documents</h1> 
+
+        <!-- Display form errors -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field, error_list in form.errors.items %}
+                        {% for error in error_list %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Display the upload form -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_name">Name:</label>
+                <input type="text" id="id_name" name="name" placeholder="Enter the Name of your file" />
+                <button type="submit" style="background-color: #cc1f51;">Upload</button>
+            </div> <br>
+            {{ form.file }}
+        </form>
+
+        <div class="uploaded_content">
+            <!-- Display uploaded documents in a table -->
+            {% if documents %}
+                <h2>Uploaded Files</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="border-radius: 10px 0 0 10px;">#</th>
+                            <th>Document Name</th>
+                            <th>Date Uploaded</th>
+                            <th>Size</th>
+                            <th>Type</th>
+                            <th style="border-radius: 0 10px 10px 0;">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in documents %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ document.name }}</td>
+                                <td>{{ document.uploaded_at|date:"d M Y" }}</td>
+                                <td>{{ document.file.size|filesizeformat_mb }}</td>
+                                <td>{{ document.file.name|slice:'-3:' }}</td>
+                                <td><a href="{{ document.file.url }}" class="view-link">View</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

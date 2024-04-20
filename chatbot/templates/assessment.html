@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+<style>
+  /* Existing styles */
+
+.main-container {
+  display: flex;
+}
+
+.chat-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  /*padding-top: 55px;*/
+  padding-left: 250px;
+  padding-bottom: 55px;
+}
+.card{
+  flex-grow:1;
+}
+  .vertical-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    height: 100%;
+  }
+
+  .message-form {
+    width: 300%;
+    max-width: 750px; /* Adjust as needed */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(202, 20, 87, 0.759);
+    font-family: poppins;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-sizing: border-box;
+    color: rgb(127, 127, 127);;
+  }
+
+  .btn-send {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3265;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(202, 20, 87, 0.759);
+  }
+
+  .btn-send:hover {
+    background-color: #af0d3e;
+    color: #ffffff;
+  }
+
+  .btn-send:active {
+    background-color: #7f0b2e;
+    color: #ffffff;
+  }
+
+  .navbar {
+  display: flex;
+  background-color: #efefef; /* Background color */
+  width:100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  
+}
+
+.navbar-nav {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.nav-item {
+  margin-right: 10px; /* Adjust the spacing between nav items */
+}
+
+.nav-link {
+  color: #f44067; /* Text color */
+  text-decoration: none;
+  padding: 10px;
+  font-weight: bold;
+  margin-right: 5px; /* Adjust as needed */
+  padding-left: 10; /* Removes padding on the left */
+  padding-right: 0;
+}
+
+.nav-link:hover {
+  background-color: #cccccc; /* Hover background color */
+  color:#dc3265  
+}
+
+#loadingIndicator {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+    position: relative;
+    border-radius: 50%;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #09f;
+    animation: spin 1s linear infinite;
+  }
+
+  .go{
+  color:rgb(76, 76, 76);
+  text-decoration: none;
+
+}
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .flex-container {
+  display: flex;
+  justify-content: flex-start;
+ 
+}
+
+.flex-container > div {
+  margin-right: 7px; /* Adjust as needed */
+}
+
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="main-container">
+  {% include 'sidebar.html' %}
+
+<div class="chat-container">
+ 
+  
+    <div class="card-body messages-box">
+
+      <ul class="list-unstyled messages-list">
+        <!-- Messages List -->
+      </ul>
+
+      <div class="vertical-center">
+        <h5><a class="go" href="assessment"><i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i>Assessment</a></h5><br><br>
+        <h2 style="color:rgb(76, 76, 76);"><strong>New Assessment</strong></h2>
+        <p style="color:rgb(127, 127, 127);">You can create a new assessment by selecting Subject, Topic, Assessment Type and <br>
+        the number of questions. Our AI Buddy will create an assessment test for you based on your selection.</p>
+        <br>
+        <form class="message-form">
+          {% csrf_token %}
+          <!-- Including Grade and Board from Eshal's code 
+          
+          <div class="form-group">
+            <div class="flex-container">
+              <div style="margin-right: 40px;">
+                <label for="grade">Grade</label>
+                <select class="form-control" name="grade" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+              <div>
+                <label for="board">Board</label>
+                <select class="form-control" name="board" required>
+                  <option value="cbse">CBSE</option>
+                  <option value="icse">ICSE</option>
+                  <option value="igcse">IGCSE</option>
+                  <option value="ib">IB</option>
+                  <option value="ap">State-AP</option>
+                  <option value="ts">State-TS</option>
+                  <option value="ks">State-KA</option>
+                  <option value="cg">State-CG</option>
+                </select>
+              </div>
+            </div>
+          </div>
+                 -->
+
+          <!-- My code unaffected -->
+          <div class="form-group">
+            <label for="subjects">Subjects:</label>
+            <select class="form-control" style="margin-right:20px;" name="subjects" required>
+              <option disabled value="">Select your Subjects:</option>
+              <option value="english">English</option>
+              <option value="science">Science</option>
+              <option value="maths">Maths</option>
+            </select>
+          </div>
+
+          <div class="form-group" >
+            <label for="topics">Enter Topic:</label>
+              <input type="text" class="form-control" name="topics" required>
+          </div>
+
+          <div id="loadingIndicator">
+            <div class="spinner"></div>
+            <div>Generating Assessment...</div>
+          </div>
+          
+
+          <div class="form-group">
+            <label for="assessment_type">Assessment Type:</label>
+            <select class="form-control" name="assessment_type" required>
+              <option disabled value="">Select Assessment Type:</option>
+              <option value="Multiple Choice Questions">Multiple Choice Questions</option>
+              <option value="True and False">True and false</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="num_questions">Enter Number of Questions:</label>
+            <input type="number" class="form-control" name="num_questions" min="1"  max="10" required>
+          </div>
+
+          <button type="submit" class="btn btn-send">Send</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--</div>-->
+
+<script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm = document.querySelector('.message-form');
+ // const gradeselect = document.querySelector('[name="grade"]');
+ // const boardselect = document.querySelector('[name="board"]');
+  const messageInput = document.querySelector('[name="subjects"]'); // Corrected selector
+  const topicsSelect = document.querySelector('[name="topics"]'); // Corrected selector
+  const assessmentTypeSelect = document.querySelector('[name="assessment_type"]'); // Corrected selector
+  const numQuestionsInput = document.querySelector('[name="num_questions"]'); // Corrected selector
+
+  const loadingIndicator = document.getElementById('loadingIndicator');
+
+ /*  // Define topic data (assuming a simple structure for this example)
+  const subjectTopics = {
+      "english": ["Sentence Equivalence","Text Completion","Reading Comprehension","Nouns","Pro Nouns","Verbs","Tenses","Adjectives","Adverbs","Logical Reading Comprehension"],
+      "science": ["Human Body", "Fluid Dynamics", "Newtonion Mechanics", "Thermodynaics", "Organic Chemistry", "Periodic Table"],
+      "maths":  ["Calculus","Statistics","Trigonometry","Algebra","Rate Time Work","Permutations and Combinations","Probability","Geometry"]
+    };
+  
+    // Function to update topics based on selected subject(s)
+    function updateTopics() {
+      const selectedSubjects = [...messageInput.selectedOptions]
+        .map(option => option.value);
+  
+      topicsSelect.innerHTML = ''; // Clear previous options
+  
+      selectedSubjects.forEach(subject => {
+        if (subjectTopics.hasOwnProperty(subject)) {
+          subjectTopics[subject].forEach(topic => {
+            const option = document.createElement('option');
+            option.value = topic;
+            option.text = topic;
+            topicsSelect.appendChild(option);
+          });
+        } else {
+          // Handle case where a subject has no associated topics
+          const option = document.createElement('option');
+          option.value = "";
+          option.text = "No topics available for this subject";
+          option.disabled = true;
+          topicsSelect.appendChild(option);
+        }
+      });
+
+      // Enable/disable topics select based on subjects
+      topicsSelect.disabled = messageInput.value === '';
+    }
+*/
+
+messageForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  // Show the loading indicator
+  loadingIndicator.style.display = 'block';
+
+  const message = messageInput.value;
+  const topics = [...topicsSelect.selectedOptions].map(option => option.value);
+  const assess_type = assessmentTypeSelect.value;
+  const num_ques = numQuestionsInput.value;
+  const grade = gradeselect.value;
+  const board = boardselect.value;
+
+  let assessmentUrl = '';
+
+  if (assess_type === 'Multiple Choice Questions') {
+    assessmentUrl = '/interface';
+  } else if (assess_type === 'True and False') {
+    assessmentUrl = '/true_n_false_interface';
+  }
+
+  const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics.join(', ')} for the subject ${message}`;
+
+  const messageItem = document.createElement('li');
+  messageItem.classList.add('message', 'sent');
+  messageItem.innerHTML = ``;
+  messagesList.appendChild(messageItem);
+
+  messageInput.value = '';
+
+  fetch('', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      'message': combinedMessage
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      const response = data.response;
+      // Hide the loading indicator before redirecting
+      loadingIndicator.style.display = 'none';
+      // Redirect to the assessment URL
+      window.location.href = assessmentUrl + '?assessment_data=' + encodeURIComponent(response);
+    })
+    .catch(error => {
+      console.error('Error occurred during fetch:', error);
+      // Hide the loading indicator on error
+      loadingIndicator.style.display = 'none';
+    });
+});
+
+
+  // Update topics on subject change
+  messageInput.addEventListener('change', updateTopics);
+
+  // You can optionally handle initial topic selection based on a default subject
+  if (messageInput.querySelector('option:selected').value) {
+    updateTopics();
+  }
+
+</script>
+
+{% endblock %}

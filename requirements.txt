@@ -1,0 +1,22 @@
+six
+django
+openai
+langchain_openai
+langchain_core
+python-dotenv
+streamlit
+langchain_community
+langserve
+fastapi
+uvicorn
+sse_starlette
+bs4
+pypdf
+chromadb
+faiss-cpu
+unstructured
+
+
+#in settings.py of django_chatbot for SMTP Configuration replace ur email and password
+
+# For privacy create one app password in gmail-> manage account-> security-> ->turn on 2factor verification ->in the bottom app password -> give some name for app -> copy paste generated app pass here in smtp configuration

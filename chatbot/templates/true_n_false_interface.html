@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'poppins', sans-serif;
+  }
+
+  .main-container {
+    display: flex;
+  }
+
+  /* Flexbox Container */
+  .container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Center content vertically */
+    align-items: left; /* Center content horizontally */
+    /* Add padding around the container */
+    padding-top: 55px;
+    padding-left: 150px;
+    padding-bottom: 55px;
+  }
+
+  /* Card Styles */
+  .card {
+    width: 110%; /* Set the card width to 100% of its container */
+    max-width: 110%; /* Limit the maximum width to 800px */
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    font-family: 'poppins', sans-serif;
+    border-radius: 5px;
+  }
+
+  .btn-primary {
+    background-color: #dc3265;
+    border-color: #dc3265;
+  }
+
+  .btn-primary:hover {
+    background-color: #af0d3e;
+    border-color: #af0d3e;
+  }
+
+  .navbar {
+    display: flex;
+    background-color: #efefef;
+    width: 100%;
+    padding-left: 17%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .navbar-nav {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-item {
+    margin-right: 10px;
+  }
+
+  .nav-link {
+    color: #f44067;
+    text-decoration: none;
+    padding: 10px;
+    font-weight: bold;
+    margin-right: 5px;
+    padding-left: 10px;
+    padding-right: 0;
+  }
+
+  .nav-link:hover {
+    background-color: #cccccc;
+    color: #dc3265;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar">
+  {% if user.is_authenticated %}
+  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+  <a class="nav-link" style="margin-left: auto;font-size: 20px;" href="logout">Logout</a>
+  {% else %}
+  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+  <a class="nav-link" style="margin-left: auto;" href="signin">Login</a>
+  <a class="nav-link" style="margin-left: auto;" href="register">Register</a>
+  {% endif %}
+</nav>
+<div class="main-container">
+  {% include 'sidebar.html' %}
+</div>
+<div class="container">
+  <h1>True or False Questions</h1>
+  <hr>
+  <form method="post" id="trueFalseForm">
+    {% csrf_token %}
+    {% for question in true_false_questions %}
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Question:</h5>
+        <p class="card-text">{{ question.question }}</p>
+        <div class="form-group">
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="answer_true_{{ question.id }}" name="answer_{{ question.id }}" value="true">
+            <label class="form-check-label" for="answer_true_{{ question.id }}">True</label>
+          </div>
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="answer_false_{{ question.id }}" name="answer_{{ question.id }}" value="false">
+            <label class="form-check-label" for="answer_false_{{ question.id }}">False</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    {% if messages %}
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

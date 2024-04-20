@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<head>
+  <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+</head>
+{% block styles %}
+<style>
+    body, html {
+      height: 100%;
+      font-family:"DM Sans";
+    }
+
+    .chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      align-items: center; /* Center content horizontally */
+      /*padding-top: 55px;*/
+      padding-left: 250px;
+     /* padding-bottom: 10px;*/
+     
+    }
+    .main-container {
+    display: flex;
+    height: 100%;
+    }
+
+    .card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid transparent rgb(255, 255, 255);
+    width: 100%;
+    padding-left: 60px;
+}
+
+
+.dashboard-heading {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 40px;
+      color:rgb(76, 76, 76);
+      font-family:"DM Sans";
+      padding-top: 9%;
+    }
+    .line {
+      border-top: 2px solid white;
+      margin-bottom: 20px;
+    }
+    .box-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .box {
+      width: calc(45% - 50px);
+      height: 250px;
+      background-color: #f0f0f0;
+      margin-bottom: 90px;
+      margin-right: 50px;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .box-heading {
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-family: "DM Sans";
+      font-weight:medium;
+      position: absolute;
+      top: -30px;
+      left: 0;
+      right: 0;
+      text-align: left;
+      margin: auto;
+      color: rgb(127, 127, 127);
+    }
+
+    /*container for sidebar*/
+  </style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-container">
+  {% include 'sidebar.html' %}
+  
+
+<div class="chat-container">
+  <div class="card flex-grow-1 ">
+  <div class="card-body messages-box">
+      
+    <div class="dashboard-heading">Dashboard</div>
+  <div class="line"></div>
+  <div class="box-container">
+    <div class="box">
+      <div class="box-heading">Recent Assessments</div>
+    </div>
+    <div class="box">
+      <div class="box-heading">Recommendations</div>
+    </div>
+    <div class="box">
+      <div class="box-heading">Quick Tips</div>
+    </div>
+    <div class="box">
+      <div class="box-heading">Reports</div>
+    </div>
+  </div>
+
+  </div>
+  </div>
+  
+</div>
+</div>
+
+
+{% endblock %}

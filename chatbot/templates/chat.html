@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<head>
+  <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
+</head>
+<style>
+    body, html {
+      height: 100%;
+    }
+
+    .messages-box {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .messages-list {
+      padding-left: 0;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      list-style: none;
+    }
+
+    .message-text {
+      padding: 10px;
+      border-radius: 5px;
+      color:  rgb(76, 76, 76);
+    }
+
+    .sent {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+      color: rgb(76, 76, 76);
+      font-family: DM Sans;
+    }
+
+    .received {
+      background-color: #ffffff;
+      align-self: flex-start;
+    }
+
+    .message-form {
+      /*display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: #f8f9fa;*/
+      width: 100%;
+      padding: 9px;
+      height: 10%;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      border-color: #ffffff;
+      font-family: poppins;
+
+    }
+
+    .message-input {
+      flex: 1;
+      border-radius: 0;
+      border-right: none;
+      outline: none; /* Remove focus outline */
+      border-color: transparent; 
+    }
+
+
+
+    .input-group {
+    position: relative;
+}
+.message-content {
+    font-size: 16px;
+    font-family: "DM Sans";
+    color: rgb(76, 76, 76);
+    margin-left: 20px;
+    margin-bottom: 40px;
+    
+}
+
+.btn-send {
+    position: absolute;
+    right: 10px; /* Adjust the distance from the right side */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+    background-color: transparent; /* Set background color to transparent */
+    color: #888; /* Set icon color to grey */
+    border: none;
+    outline: none; /* Remove focus outline */
+    border-color: transparent; 
+}
+    
+    .chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      align-items: center; /* Center content horizontally */
+      /*padding-top: 55px;*/
+      padding-left: 270px;
+     /* padding-bottom: 10px;*/
+     
+    }
+    .main-container {
+    display: flex;
+    height: 100%;
+    }
+
+    .card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    flex-grow:1;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid transparent rgb(255, 255, 255);
+    width: 100%; 
+  }
+
+    .form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 20px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid  rgb(127, 127, 127);
+    border-radius: .25rem;
+    /*transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;*/
+}
+
+
+
+    /*container for sidebar*/
+  </style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-container">
+  {% include 'sidebar.html' %}
+
+  <div class="chat-container">
+    <div class="card flex-grow-1 ">
+      
+      <div class="card-body messages-box">
+        
+        <ul class="list-unstyled messages-list">
+          
+          {% for chat in chats %}
+            {% if chat.user == request.user %}
+
+              <li class="message sent">
+                <div class="message-text">
+                  <div class="message-sender">
+                    <b>You</b>
+                  </div>
+                  <div class="message-content">
+                    {{chat.message}}
+                  </div>
+                </div>
+              </li>
+
+              <li class="message received">
+                <div class="message-text">
+                  <div class="message-sender">
+                    <b>AI Chatbot</b>
+                  </div>
+                  <div class="message-content">
+                    {{chat.response}}
+                  </div>
+                </div>
+              </li>
+
+            {% endif %}
+          {% endfor %}
+          
+        </ul>
+        
+      </div>
+
+      <!-- Move the message content outside the card-body -->
+      <div class="message-content">
+        Hi {{user.username}}, I am your AI Chatbot, you can ask me anything.<br><br>
+        <i class="fa-regular fa-lightbulb"  style="margin-right: 5px;"></i>Sample questions you can ask
+        <hr style="border-width: 3px; color: rgba(76, 76, 76, 0.448);">
+        <a href="reports.html" style="color: rgb(76, 76, 76);">Hey buddy how I am doing with my maths</a>
+        <hr style="border-width: 3px; color: rgba(76, 76, 76, 0.445);">
+        <button type="submit" class="message-input" style="border:#ffffff; background-color: #ffffff; color:rgb(76, 76, 76);">Can you explain me the third law of newton's in a funny way</button>
+      </div>
+
+      <!--moved the closing div of the card-body below to enclose the message form*/-->
+      <form class="message-form">
+        {%csrf_token%}
+        <div class="input-group position-relative">
+          <input type="text" class="form-control message-input" placeholder="Type your message...">
+          <div class="input-group-append">
+            <button type="submit" class="btn-send"><i class="fa fa-regular fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm = document.querySelector('.message-form');
+  const messageInput = document.querySelector('.message-input');
+
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const message = messageInput.value.trim();
+  
+    if (message.length === 0) {
+      return;
+    }
+
+    const messageItem = document.createElement('li');
+    messageItem.classList.add('message', 'sent');
+    messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+                <b>You</b>
+            </div>
+            <div class="message-content">
+                ${message}
+            </div>
+        </div>`;
+    messagesList.appendChild(messageItem);
+
+    messageInput.value = '';
+
+    fetch('', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const response = data.response;
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+                ${response}
+            </div>
+        </div>
+          `;
+        messagesList.appendChild(messageItem);
+      });
+  });
+
+</script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family:"DM Sans";
+      background-color: #f0f0f0; /* Change background color as needed */
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 270px;
+      height: 100%;
+      background-color: rgb(66, 66, 66);
+      padding-top: 20px; /* Adjust top padding as needed */
+      padding-bottom: 50px; /* Adjust bottom padding as needed for footer */
+      color: white;
+    }
+
+    .sidebar img { 
+    visibility: visible;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    border: 0px;
+    vertical-align: middle; 
+    padding-left: 10%;
+    width: 200px; 
+    height: 53px;
+    }
+
+    .menu-item {
+    flex-grow: 1;
+    margin: 0px;
+    overflow: hidden;
+    font-size: 18px;
+    font-weight: 400;
+    text-transform: none;
+    text-align: left;
+    letter-spacing: 0px;
+    line-height: 3;
+    opacity: 1;
+    visibility: visible;
+    font-family: "DM Sans";
+    padding-left: 30px;
+    color:#ffffff;
+    }
+
+    .submenu-item {
+      padding: 10px 20px;
+      font-size: 16px; /* Submenu item font size */
+      font-family: "DM Sans";
+      text-decoration: none;
+      color: #f0f0f0;
+      margin-left: 10px; /* Increase the margin to create space */
+    }
+
+    .submenu {
+      padding-left: 20px;
+    }
+
+    .active {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 250px;
+      padding: 10px 20px;
+      background-color: rgb(66, 66, 66);
+      color: white;
+      border-top: 1px solid white; 
+    }
+
+    a{   
+    color: #c5c5c5ff;
+    text-decoration: none;
+    background-color: transparent;
+    }
+
+    a:hover{
+      color: rgba(197, 197, 197, 0.742);
+      text-decoration: none;
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <img src="https://assets.api.uizard.io/api/cdn/stream/d9c4b3d4-c2d6-4c2b-95e8-93adae4a96c3.png">
+    <div class="menu-item" id="dashboardLink"><a href="dashboard" style="color: #ffffff;">Dashboard</a></div>
+    <div class="menu-item"><a href="{% url 'chat' %}" style="color: #ffffff;">Chat with Buddy</a></div>
+    <div class="menu-item" id="assessmentLink">Assessments</div>
+    <div class="submenu" id="assessmentSubmenu">
+      <div class="submenu-item"><svg style="height: 20px; width: 20px;" viewBox="0 0 24 24">
+        <path d="M0 0h24v24H0z" fill="none">
+        </path>
+        <path style="fill: #ffffff" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z">
+        </path>
+      </svg><a href="assessment">New Assessment</a></div>
+      <div class="submenu-item"><i class="fa-solid fa-ranking-star" style="margin-right: 5px;"></i><a href="assessment_history">Past Assessments</a></div>
+    </div>
+    <div class="menu-item" id="knowledgeLink">Knowledge Center</div>
+    <div class="submenu" id="knowledgeSubmenu">
+      <div class="submenu-item"><i class="fas fa-file-upload" style="margin-right: 5px;"></i><a href="{% url 'upload_document' %}">Upload Documents</a></div>
+      <div class="submenu-item"><i class="fa fa-solid fa-file-pdf" style="margin-right: 5px;"></i><a href="{% url 'rag_search' %}">Learn from Documents</a></div>
+      <div class="submenu-item"><i class="fas fa-solid fa-receipt" style="margin-right: 5px;"></i><a href="#">Test from Documents</a></div>
+    </div>
+    <div class="menu-item" id="performanceLink">My Performance</div>
+    <div class="submenu" id="performanceSubmenu">
+      <div class="submenu-item"><i class="fas fa-solid fa-chart-line" style="margin-right: 5px;"></i><a href="#">Reports</a></div>
+      <div class="submenu-item"><i class="fas fa-solid fa-star" style="margin-right: 3px;"></i><a href="#">Recommendations</a></div>
+    </div>
+    <div class="footer">
+      <div>
+        {% if user.is_authenticated %}
+        <img src="your-icon-path.png" alt="img" style="vertical-align: middle; padding-left: 25%; width:50px; height: 50px;">
+        <span style="margin-left: 10px;">{{user.username}}</span>
+        {% else %}
+        <span style="margin-left: 10px;">User</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

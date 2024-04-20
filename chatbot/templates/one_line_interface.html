@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    box-shadow: 0 0px 10px rgba(238, 33, 105, 0.752);
+    font-family: poppins;
+    border-radius: 5px ;
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <h1>One Line Questions</h1>
+  <hr>
+  <form method="post" id="onelineForm">
+    {% csrf_token %}
+    {% for question in one_line_questions %}
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Question:</h5>
+        <p class="card-text">{{ question.question}}</p>
+        <div class="form-group">
+          <label for="answer_{{ forloop.counter }}">Your Answer:</label>
+          <input type="text" class="form-control" id="answer_{{ forloop.counter }}" name="answer_{{ forloop.counter }}" autocomplete="off">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}

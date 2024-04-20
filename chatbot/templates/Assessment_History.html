@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: #333;
+    color: #fff;
+    z-index: 1000; /* Above other content but below popups */
+  }
+
+  .container {
+    margin-left: 250px; /* Adjust based on sidebar width */
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  .statistics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .stat-item {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    color: rgb(216, 27, 93);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(216, 27, 93); /* Pink border */
+  }
+
+  .stat-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    margin-top: 10px;
+  }
+
+  .chart-container {
+    margin-bottom: 40px;
+  }
+
+  .result-details-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 17%;
+    
+    width: 80%;
+    max-height: 80%;
+    
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensures popup is above all other content */
+  }
+
+  .close-popup {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .assessment-item {
+    margin-bottom: 20px;
+  }
+
+  .view-results-btn {
+    cursor: pointer;
+    background-color: rgb(216, 27, 93);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  .assessment-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .assessment-table th, .assessment-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .assessment-table tr:nth-child(even){background-color: #f2f2f2;}
+  
+  .assessment-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(216, 27, 93);
+    color: white;
+  }
+
+  .result-details-btn {
+    /* Style adjustments for buttons within table */
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+  }
+
+  .popup-overlay {
+    display: none; /* Hide by default */
+    position: fixed; /* Stay in place */
+    z-index: 1001; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  .popup-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 10px; /* Optional: for rounded corners */
+  }
+
+  .close-popup {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close-popup:hover,
+  .close-popup:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* Additional styling for your button */
+  .view-chart-btn {
+    background-color: rgb(216, 27, 93);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    
+  }
+
+  .view-chart-btn-wrapper {
+    display: flex;
+    justify-content: center; /* Aligns the button horizontally in the center */
+    margin: 20px 0; /* Adds some space above and below the button */
+  }
+
+  .navbar {
+    display: flex;
+    background-color: #efefef; /* Background color */
+    width: 100%;
+    padding-left: 17%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .navbar-nav {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-item {
+    margin-right: 10px; /* Adjust the spacing between nav items */
+  }
+
+  .nav-link {
+    color: #f44067; /* Text color */
+    text-decoration: none;
+    padding: 10px;
+    font-weight: bold;
+    margin-right: 5px; /* Adjust as needed */
+    padding-left: 10; /* Removes padding on the left */
+    padding-right: 0;
+  }
+
+  .nav-link:hover {
+    background-color: #cccccc; /* Hover background color */
+    color:#dc3265
+  }
+
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<nav class="navbar">
+  {% if user.is_authenticated %}
+  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+  <a class="nav-link" style="margin-left: auto;font-size: 20px;" href="logout">Logout</a>
+  {% else %}
+  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+  <a class="nav-link" style="margin-left: auto;" href="signin">Login</a>
+  <a class="nav-link" style="margin-left: auto;" href="register">Register</a>
+  {% endif %}
+</nav>
+<div class="sidebar">
+  {% include 'sidebar.html' %}
+</div>
+<div class="container">
+  <div class="statistics">
+    <div class="stat-item">
+      <p class="stat-title">Total Assessments</p>
+      <p class="stat-value">{{ total_assessments }}</p>
+    </div>
+    <div class="stat-item">
+      <p class="stat-title">Average Score</p>
+      <p class="stat-value">{{ average_score|floatformat:2 }}</p>
+    </div>
+  </div>
+
+  <button class="view-chart-btn" onclick="showChartPopup()">View Chart</button>
+
+  <div class="popup-overlay" id="chartPopup">
+    <div class="popup-content">
+      <span class="close-popup" onclick="closeChartPopup()">&times;</span>
+      <div class="chart-container">
+        <canvas id="scoreChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <hr>
+  {% if assessment_history %}
+    <table class="assessment-table">
+      <thead>
+        <tr>
+          <th>Assessment ID</th>
+          <th>Score</th>
+          <th>Date Taken</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for history in assessment_history %}
+        <tr>
+          <td>{{ history.assessment_id }}</td>
+          <td>{{ history.score }} / {{history.max_score}}</td>
+          <td>{{ history.date_taken|date:"Y-m-d " }}</td> 
+          <td>
+            <button class="view-results-btn" onclick="showResultDetails('resultDetails{{ forloop.counter }}')">View Result Details</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <!-- Popups for result details remain unchanged -->
+    {% for history in assessment_history %}
+
+    <div id="resultDetails{{ forloop.counter }}" class="result-details-popup">
+
+      <div class="close-popup" onclick="closeResultDetails('resultDetails{{ forloop.counter }}')">&times;</div>
+      
+        <div>
+          {% for detail in history.result_details %}
+              <div>
+                  <p><strong>Question:</strong> {{ detail.question }}</p>
+                  <p><strong>Correct Answer:</strong> {{ detail.correct_answer }}</p>
+                  <p><strong>Your Answer:</strong> {{ detail.user_answer }}</p>
+              </div>
+          {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p>No assessment history found.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Assuming 'assessment_history' is a list of objects containing 'score', 'max_score', and 'assessment_id'
+    const assessmentData = [
+      {% for history in assessment_history %}
+      {
+        score: {{ history.score }},
+        maxScore: {{ history.max_score }},
+        assessmentNumber: '{{ history.assessment_id }}'
+      },
+      {% endfor %}
+    ];
+
+    const labels = assessmentData.map(data => data.assessmentNumber);
+    const scores = assessmentData.map(data => data.score);
+    const maxScores = assessmentData.map(data => data.maxScore);
+    
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    const scoreChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Score',
+          data: scores,
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          tension: 0.1,
+          yAxisID: 'score',
+        }, {
+          label: 'Max Score',
+          data: maxScores,
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          tension: 0.1,
+          yAxisID: 'maxScore',
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Score'
+            },
+            position: 'left',
+            id: 'score',
+          },
+          y1: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Max Score'
+            },
+            position: 'right',
+            id: 'maxScore',
+            grid: {
+              display: false
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Assessment Number'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+          }
+        }
+      }
+    });
+    
+    // Popup functions
+    window.showChartPopup = function() {
+      document.getElementById('chartPopup').style.display = 'block';
+      // Might need to call chart's update method if the chart is not visible initially
+      scoreChart.update();
+    };
+    
+    window.closeChartPopup = function() {
+      document.getElementById('chartPopup').style.display = 'none';
+    };
+  });
+  function showResultDetails(id) {
+    var popup = document.getElementById(id);
+    popup.style.display = 'block';
+  }
+
+  function closeResultDetails(id) {
+    var popup = document.getElementById(id);
+    popup.style.display = 'none';
+  }
+ 
+</script>
+{% endblock %}
