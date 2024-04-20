@@ -15,6 +15,7 @@ pypdf
 chromadb
 faiss-cpu
 unstructured
+mysqlclient
 
 
 #in settings.py of django_chatbot for SMTP Configuration replace ur email and password
