@@ -1,6 +1,7 @@
 six
 django
 openai
+langchain
 langchain_openai
 langchain_core
 python-dotenv
