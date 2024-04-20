@@ -1,6 +1,7 @@
 six
 django
 openai
+langchain
 langchain_openai
 langchain_core
 python-dotenv
@@ -8,13 +9,14 @@ streamlit
 langchain_community
 langserve
 fastapi
-uvicorn
+gunicorn==21.2.0
 sse_starlette
 bs4
 pypdf
 chromadb
 faiss-cpu
 unstructured
+mysqlclient
 
 
 #in settings.py of django_chatbot for SMTP Configuration replace ur email and password
