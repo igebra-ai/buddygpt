@@ -99,29 +99,50 @@
 </head>
 <body>
   <div class="sidebar">
-    <img src="https://assets.api.uizard.io/api/cdn/stream/d9c4b3d4-c2d6-4c2b-95e8-93adae4a96c3.png">
-    <div class="menu-item" id="dashboardLink"><a href="dashboard" style="color: #ffffff;">Dashboard</a></div>
+    <a href="{% url 'dashboard' %}">
+      <img src="https://assets.api.uizard.io/api/cdn/stream/d9c4b3d4-c2d6-4c2b-95e8-93adae4a96c3.png">
+    </a>
+    <div class="menu-item" id="dashboardLink"><a href="{% url 'dashboard' %}" style="color: #ffffff;">Dashboard</a></div>
     <div class="menu-item"><a href="{% url 'chat' %}" style="color: #ffffff;">Chat with Buddy</a></div>
     <div class="menu-item" id="assessmentLink">Assessments</div>
     <div class="submenu" id="assessmentSubmenu">
-      <div class="submenu-item"><svg style="height: 20px; width: 20px;" viewBox="0 0 24 24">
-        <path d="M0 0h24v24H0z" fill="none">
-        </path>
-        <path style="fill: #ffffff" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z">
-        </path>
-      </svg><a href="assessment">New Assessment</a></div>
-      <div class="submenu-item"><i class="fa-solid fa-ranking-star" style="margin-right: 5px;"></i><a href="assessment_history">Past Assessments</a></div>
+      <div class="submenu-item">
+        <svg style="height: 20px; width: 20px;" viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0z" fill="none"></path>
+          <path style="fill: #ffffff" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
+        </svg>
+        <a href="{% url 'assessment' %}">New Assessment</a>
+      </div>
+      <div class="submenu-item">
+        <i class="fa-solid fa-ranking-star" style="margin-right: 5px;"></i>
+        <a href="{% url 'assessment_history' %}">Past Assessments</a>
+      </div>
     </div>
     <div class="menu-item" id="knowledgeLink">Knowledge Center</div>
     <div class="submenu" id="knowledgeSubmenu">
-      <div class="submenu-item"><i class="fas fa-file-upload" style="margin-right: 5px;"></i><a href="{% url 'upload_document' %}">Upload Documents</a></div>
-      <div class="submenu-item"><i class="fa fa-solid fa-file-pdf" style="margin-right: 5px;"></i><a href="{% url 'rag_search' %}">Learn from Documents</a></div>
-      <div class="submenu-item"><i class="fas fa-solid fa-receipt" style="margin-right: 5px;"></i><a href="#">Test from Documents</a></div>
+      <div class="submenu-item">
+        <i class="fas fa-file-upload" style="margin-right: 5px;"></i>
+        <a href="{% url 'upload_document' %}">Upload Documents</a>
+      </div>
+      <div class="submenu-item">
+        <i class="fa fa-solid fa-file-pdf" style="margin-right: 5px;"></i>
+        <a href="{% url 'rag_search' %}">Learn from Documents</a>
+      </div>
+      <div class="submenu-item">
+        <i class="fas fa-solid fa-receipt" style="margin-right: 5px;"></i>
+        <a href="#">Test from Documents</a>
+      </div>
     </div>
     <div class="menu-item" id="performanceLink">My Performance</div>
     <div class="submenu" id="performanceSubmenu">
-      <div class="submenu-item"><i class="fas fa-solid fa-chart-line" style="margin-right: 5px;"></i><a href="#">Reports</a></div>
-      <div class="submenu-item"><i class="fas fa-solid fa-star" style="margin-right: 3px;"></i><a href="#">Recommendations</a></div>
+      <div class="submenu-item">
+        <i class="fas fa-solid fa-chart-line" style="margin-right: 5px;"></i>
+        <a href="#">Reports</a>
+      </div>
+      <div class="submenu-item">
+        <i class="fas fa-solid fa-star" style="margin-right: 3px;"></i>
+        <a href="#">Recommendations</a>
+      </div>
     </div>
     <div class="footer">
       <div>
