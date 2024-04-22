@@ -81,7 +81,7 @@
     </button>
     </div>
     {% endfor %}
-      <form method="post" action="signin">
+    <form method="post" action="{% url 'signin' %}">
         {% csrf_token %}
         <div class="form-group">
           <label for="username">Username</label>
