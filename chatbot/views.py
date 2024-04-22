@@ -45,6 +45,7 @@ def ask_openai(message):
     return answer
 
 # Create your views here.
+
 def chatbot(request):
     if request.method == 'POST':
         message = request.POST.get('message')
@@ -54,6 +55,9 @@ def chatbot(request):
     return render(request, 'chatbot.html')
 
 def chat(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin') 
     if request.method == 'POST':
         message = request.POST.get('message')
         response = ask_openai(message)
@@ -69,12 +73,11 @@ def signin(request):
         user = authenticate(username=username, password=pass1)
         
         if user is not None:
-            login(request,user)
+            login(request, user)
             fname = user.first_name
-            return render(request, 'chatbot.html', {'fname': fname})
-        
+            return redirect('dashboard')  # Redirect to dashboard URL
         else:
-            messages.error(request,"Bad Credentials!")
+            messages.error(request, "Bad Credentials!")
             return redirect('signin')
             
     return render(request, "signin.html")
@@ -184,11 +187,11 @@ def generate_assessment(message):
             {"role": "user", "content": message},
         ]
     )
-
-    # Print the response for debugging
-    print("Response from GPT-3:", answer)
+   
 
     answer = response.choices[0].message.content.strip()
+    # Print the response for debugging
+    print("Response from GPT-3:", answer)
     return answer
 
 def assessment(request):
@@ -397,6 +400,9 @@ def assessment_history(request):
 
 #Uploading files for RAG
 def upload_document(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin') 
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -424,6 +430,9 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 
 def rag_search(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin') 
     # Retrieve all documents uploaded by the user
     documents = Document.objects.all()
 
@@ -500,4 +509,11 @@ def rag_search(request):
     return render(request, 'rag_search.html', context)
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page if not authenticated
+        return redirect('signin')
+    
+    # Fetch the top 5 rows from the assessment_history table
+    recent_assessments = AssessmentHistory.objects.all().order_by('-date_taken')[:5]
+    
+    return render(request, 'dashboard.html', {'recent_assessments': recent_assessments})
