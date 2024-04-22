@@ -24,14 +24,14 @@
   .vertical-center {
     display: flex;
     flex-direction: column;
-    justify-content: left;
-    align-items: left;
+    justify-content: center;
+    align-items: center;
     height: 100%;
   }
 
   .message-form {
     width: 300%;
-    max-width: 750px; /* Adjust as needed */
+    max-width: 700px; /* Adjust as needed */
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -50,7 +50,6 @@
     border: 1px solid #ccc;
     border-radius: 7px;
     box-sizing: border-box;
-    color: rgb(127, 127, 127);;
   }
 
   .btn-send {
@@ -134,27 +133,10 @@
     animation: spin 1s linear infinite;
   }
 
-  .go{
-  color:rgb(76, 76, 76);
-  text-decoration: none;
-
-}
-
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  .flex-container {
-  display: flex;
-  justify-content: flex-start;
- 
-}
-
-.flex-container > div {
-  margin-right: 7px; /* Adjust as needed */
-}
-
-
 </style>
 {% endblock %}
 
@@ -165,6 +147,18 @@
 
 <div class="chat-container">
  
+    <nav class="navbar">
+        {% if user.is_authenticated %}
+        <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+        <a class="nav-link" style="margin-left: auto; font-size: 20px;" href="logout">Logout</a>
+        {% else %}
+        <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
+        <div style="display: flex; margin-left: auto;">
+          <a class="nav-link" href="{% url 'signin' %}">Login</a>
+          <a class="nav-link" href="{% url 'register' %}">Register</a>
+        </div>
+              {% endif %}
+    </nav>
   
     <div class="card-body messages-box">
 
@@ -173,53 +167,13 @@
       </ul>
 
       <div class="vertical-center">
-        <h5><a class="go" href="assessment"><i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i>Assessment</a></h5><br><br>
-        <h2 style="color:rgb(76, 76, 76);"><strong>New Assessment</strong></h2>
-        <p style="color:rgb(127, 127, 127);">You can create a new assessment by selecting Subject, Topic, Assessment Type and <br>
-        the number of questions. Our AI Buddy will create an assessment test for you based on your selection.</p>
+        <h2><strong>Assessment Generator</strong></h2>
         <br>
         <form class="message-form">
           {% csrf_token %}
-          <!-- Including Grade and Board from Eshal's code 
-          
           <div class="form-group">
-            <div class="flex-container">
-              <div style="margin-right: 40px;">
-                <label for="grade">Grade</label>
-                <select class="form-control" name="grade" required>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                </select>
-              </div>
-              <div>
-                <label for="board">Board</label>
-                <select class="form-control" name="board" required>
-                  <option value="cbse">CBSE</option>
-                  <option value="icse">ICSE</option>
-                  <option value="igcse">IGCSE</option>
-                  <option value="ib">IB</option>
-                  <option value="ap">State-AP</option>
-                  <option value="ts">State-TS</option>
-                  <option value="ks">State-KA</option>
-                  <option value="cg">State-CG</option>
-                </select>
-              </div>
-            </div>
-          </div>
-                 -->
-
-          <!-- My code unaffected -->
-          <div class="form-group">
-            <label for="subjects">Subjects:</label>
-            <select class="form-control" style="margin-right:20px;" name="subjects" required>
+            <label for="subjects">Select Subjects:</label>
+            <select class="form-control" name="subjects"  required>
               <option disabled value="">Select your Subjects:</option>
               <option value="english">English</option>
               <option value="science">Science</option>
@@ -227,9 +181,9 @@
             </select>
           </div>
 
-          <div class="form-group" >
+          <div class="form-group">
             <label for="topics">Enter Topic:</label>
-              <input type="text" class="form-control" name="topics" required>
+            <input type="text" class="form-control" name="topics" placeholder="Enter Topic" required>
           </div>
 
           <div id="loadingIndicator">
@@ -252,7 +206,7 @@
             <input type="number" class="form-control" name="num_questions" min="1"  max="10" required>
           </div>
 
-          <button type="submit" class="btn btn-send">Send</button>
+          <button type="submit" class="btn btn-send">Generate Assessment</button>
         </form>
       </div>
 
@@ -264,113 +218,63 @@
 <script>
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
- // const gradeselect = document.querySelector('[name="grade"]');
- // const boardselect = document.querySelector('[name="board"]');
-  const messageInput = document.querySelector('[name="subjects"]'); // Corrected selector
-  const topicsSelect = document.querySelector('[name="topics"]'); // Corrected selector
-  const assessmentTypeSelect = document.querySelector('[name="assessment_type"]'); // Corrected selector
-  const numQuestionsInput = document.querySelector('[name="num_questions"]'); // Corrected selector
+  const messageInput = document.querySelector('[name="subjects"]');
+  const topicsInput = document.querySelector('[name="topics"]');
+  const assessmentTypeSelect = document.querySelector('[name="assessment_type"]');
+  const numQuestionsInput = document.querySelector('[name="num_questions"]');
 
   const loadingIndicator = document.getElementById('loadingIndicator');
 
-  // Define topic data (assuming a simple structure for this example)
-  const subjectTopics = {
-      "english": ["Sentence Equivalence","Text Completion","Reading Comprehension","Nouns","Pro Nouns","Verbs","Tenses","Adjectives","Adverbs","Logical Reading Comprehension"],
-      "science": ["Human Body", "Fluid Dynamics", "Newtonion Mechanics", "Thermodynaics", "Organic Chemistry", "Periodic Table"],
-      "maths":  ["Calculus","Statistics","Trigonometry","Algebra","Rate Time Work","Permutations and Combinations","Probability","Geometry"]
-    };
-  
-    // Function to update topics based on selected subject(s)
-    function updateTopics() {
-      const selectedSubjects = [...messageInput.selectedOptions]
-        .map(option => option.value);
-  
-      topicsSelect.innerHTML = ''; // Clear previous options
-  
-      selectedSubjects.forEach(subject => {
-        if (subjectTopics.hasOwnProperty(subject)) {
-          subjectTopics[subject].forEach(topic => {
-            const option = document.createElement('option');
-            option.value = topic;
-            option.text = topic;
-            topicsSelect.appendChild(option);
-          });
-        } else {
-          // Handle case where a subject has no associated topics
-          const option = document.createElement('option');
-          option.value = "";
-          option.text = "No topics available for this subject";
-          option.disabled = true;
-          topicsSelect.appendChild(option);
-        }
-      });
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
 
-      // Enable/disable topics select based on subjects
-      topicsSelect.disabled = messageInput.value === '';
+    // Show the loading indicator
+    loadingIndicator.style.display = 'block';
+
+    const message = messageInput.value;
+    const topics = topicsInput.value;
+    const assess_type = assessmentTypeSelect.value;
+    const num_ques = numQuestionsInput.value;
+
+    let assessmentUrl = '';
+
+    if (assess_type === 'Multiple Choice Questions') {
+      assessmentUrl = '/interface';
+    } else if (assess_type === 'True and False') {
+      assessmentUrl = '/true_n_false_interface';
     }
 
+    const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics} for the subject ${message}`;
 
-messageForm.addEventListener('submit', (event) => {
-  event.preventDefault();
+    const messageItem = document.createElement('li');
+    messageItem.classList.add('message', 'sent');
+    messageItem.innerHTML = ``;
+    messagesList.appendChild(messageItem);
 
-  // Show the loading indicator
-  loadingIndicator.style.display = 'block';
+    messageInput.value = '';
+    topicsInput.value = '';
 
-  const message = messageInput.value;
-  const topics = [...topicsSelect.selectedOptions].map(option => option.value);
-  const assess_type = assessmentTypeSelect.value;
-  const num_ques = numQuestionsInput.value;
-  const grade = gradeselect.value;
-  const board = boardselect.value;
-
-  let assessmentUrl = '';
-
-  if (assess_type === 'Multiple Choice Questions') {
-    assessmentUrl = '/interface';
-  } else if (assess_type === 'True and False') {
-    assessmentUrl = '/true_n_false_interface';
-  }
-
-  const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics.join(', ')} for the subject ${message}`;
-
-  const messageItem = document.createElement('li');
-  messageItem.classList.add('message', 'sent');
-  messageItem.innerHTML = ``;
-  messagesList.appendChild(messageItem);
-
-  messageInput.value = '';
-
-  fetch('', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-      'message': combinedMessage
+    fetch('', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': combinedMessage
+      })
     })
-  })
-    .then(response => response.json())
-    .then(data => {
-      const response = data.response;
-      // Hide the loading indicator before redirecting
-      loadingIndicator.style.display = 'none';
-      // Redirect to the assessment URL
-      window.location.href = assessmentUrl + '?assessment_data=' + encodeURIComponent(response);
-    })
-    .catch(error => {
-      console.error('Error occurred during fetch:', error);
-      // Hide the loading indicator on error
-      loadingIndicator.style.display = 'none';
-    });
-});
+      .then(response => response.json())
+      .then(data => {
+        const response = data.response;
+        window.location.href = assessmentUrl + '?assessment_data=' + encodeURIComponent(response);
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = ``;
+        messagesList.appendChild(messageItem);
 
-
-  // Update topics on subject change
-  messageInput.addEventListener('change', updateTopics);
-
-  // You can optionally handle initial topic selection based on a default subject
-  if (messageInput.querySelector('option:selected').value) {
-    updateTopics();
-  }
+        // Hide the loading indicator once the page is redirected
+        loadingIndicator.style.display = 'none';
+      });
+  });
 
 </script>
 
