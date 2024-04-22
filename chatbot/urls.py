@@ -34,9 +34,7 @@ urlpatterns = [
     #path('upload_document/dashboard', views.dashboard, name='dashboard'),
     #path('upload_document/assessment', views.assessment, name='assessment'),
     #path('upload_document/assessment_history', views.assessment_history, name='assessment_history'),
-    
-    path('report/', views.report, name='report'),
-    path('recommend/', views.recommend, name='recommend'),
+
 
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),

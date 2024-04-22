@@ -4,13 +4,13 @@ from django.http import JsonResponse
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .models import AssessmentQuestion, AssessmentHistory, Document,Subject,AssessType,Question,Answer
+from .models import AssessmentQuestion, AssessmentHistory, Document
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
 from dotenv import load_dotenv
 import json
-from django.db.models import Avg,Sum,Max
+from django.db.models import Avg
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, user_logged_in
@@ -517,100 +517,3 @@ def dashboard(request):
     recent_assessments = AssessmentHistory.objects.all().order_by('-date_taken')[:5]
     
     return render(request, 'dashboard.html', {'recent_assessments': recent_assessments})
-
-
-def report(request):
-    if not request.user.is_authenticated:
-        return redirect('signin')
-
-    # Calculating both average and total scores for each subject or type
-    subjects_scores = AssessmentHistory.objects.filter(user=request.user) \
-                                               .values('subjects__subject') \
-                                               .annotate(average_score=Sum('score'),
-                                                         total_score=Sum('max_score')) \
-                                               .order_by('subjects__subject')
-
-    subjects = [score['subjects__subject'] for score in subjects_scores]
-    avg_scores = [score['average_score'] for score in subjects_scores]
-    total_scores = [score['total_score'] for score in subjects_scores]
-    
-    # Add percentage calculation
-    for score in subjects_scores:
-        score['percentage'] = (score['average_score'] / score['total_score'] * 100) if score['total_score'] > 0 else 0
-    
-    type_scores = AssessmentHistory.objects.filter(user=request.user) \
-                                           .values('assess_type__type') \
-                                           .annotate(average_score=Sum('score'),
-                                                     total_score=Sum('max_score')) \
-                                           .order_by('assess_type__type')
-
-    types = [score['assess_type__type'] for score in type_scores]
-    avg_scoress = [score['average_score'] for score in type_scores]
-    total_scoress= [score['total_score'] for score in type_scores]
-    
-    # Add percentage calculation
-    for score in type_scores:
-        score['percentage'] = (score['average_score'] / score['total_score'] * 100) if score['total_score'] > 0 else 0
-
-    return render(request, 'report.html', {
-        'subjects': subjects,
-        'avg_scores': avg_scores,
-        'total_scores': total_scores,
-        'types': types,
-        'avg_scoress': avg_scoress,
-        'total_scoress': total_scoress,
-        'subjects_scores': subjects_scores,
-        'types_scores': type_scores,
-    })
-
-def recommend(request, question_id=None):
-    if not question_id:
-        # Start with the first question
-        question = Question.objects.first()
-    else:
-        question = Question.objects.get(id=question_id)
-
-    if request.method == 'POST':
-        answer_id = request.POST.get('answer')
-        answer = Answer.objects.get(id=answer_id)
-        if answer.redirect_url:
-            return redirect(answer.redirect_url)
-        # Proceed to the next question, if there is one related to this answer
-        next_question = answer.next_question if hasattr(answer, 'next_question') else None
-        if next_question:
-            return redirect('question', question_id=next_question.id)
-        else:
-            return render(request, 'end.html', {'answer': answer})
-        
-    if not request.user.is_authenticated:
-        return redirect('signin')
-
-    # Calculate the average and total scores, and then the percentage
-    subjects_scores = AssessmentHistory.objects.filter(user=request.user) \
-                                               .values('subjects__subject') \
-                                               .annotate(total_score=Sum('max_score'),
-                                                         total_sum=Sum('score'))
-
-    # Calculate percentage and add it to each item
-    for item in subjects_scores:
-        if item['total_score'] > 0:
-            item['percentage'] = (item['total_sum'] / item['total_score']) * 100
-        else:
-            item['percentage'] = 0
-
-    # Find the lowest scoring subject
-    if subjects_scores:
-        lowest_scoring_subject = min(subjects_scores, key=lambda x: x['percentage'])
-    else:
-        lowest_scoring_subject = None
-
-    # Sort subjects by percentage in descending order for additional display
-    sorted_subjects = sorted(subjects_scores, key=lambda x: x['percentage'], reverse=True)
-
-    
-
-    return render(request, 'recommendation.html', {'question': question,'sorted_subjects': sorted_subjects,
-        'lowest_scoring_subject': lowest_scoring_subject})
-
-from django.db.models import Avg, Min
-

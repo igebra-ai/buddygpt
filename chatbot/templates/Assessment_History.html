@@ -272,8 +272,6 @@
           <th>Score</th>
           <th>Date Taken</th>
           <th>Actions</th>
-          <th>Subject</th>
-          <th>Type<th>
         </tr>
       </thead>
       <tbody>
@@ -281,12 +279,10 @@
         <tr>
           <td>{{ history.assessment_id }}</td>
           <td>{{ history.score }} / {{history.max_score}}</td>
-          <td>{{ history.date_taken|date:"d-m-Y " }}</td> 
+          <td>{{ history.date_taken|date:"Y-m-d " }}</td> 
           <td>
             <button class="view-results-btn" onclick="showResultDetails('resultDetails{{ forloop.counter }}')">View Result Details</button>
           </td>
-          <td>{{history.subjects}}</td>
-          <td>{{history.assess_type}}</td>
         </tr>
         {% endfor %}
       </tbody>
