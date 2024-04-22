@@ -20,7 +20,7 @@
         }
         .content {
             flex: 1;
-            padding: 20px 60px 0 3000px; /* 20px top, 20px right, 0 bottom, 260px left */
+            padding: 20px 20px 0 260px; /* 20px top, 20px right, 0 bottom, 260px left */
             overflow-y: auto;
         }
         .response-container {
@@ -28,12 +28,14 @@
             overflow-y: auto;
             background-color: #f7f7f7;
             padding: 20px;
+            padding-left: 60px;
             margin-bottom: 20px;
         }
         .form-container {
             margin-top: auto; /* Push form to the bottom */
             background-color: white;
             padding: 20px;
+            padding-left: 60px;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
         .form-container form {
@@ -44,13 +46,14 @@
         }
 
         .form-control {
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 7px;
-            box-sizing: border-box;
-        }
+    width: calc(100% - 16px); /* Subtract padding and border width */
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-sizing: border-box;
+}
+
         .documents-container {
             max-height: 50vh;
             overflow-x: auto;
@@ -58,6 +61,7 @@
             white-space: nowrap; /* Prevent line breaks */
             background-color: #e0e0e0;
             padding: 20px;
+            padding-left: 60px;
             margin-bottom: 20px;
         }
         .documents-container .document {
@@ -114,7 +118,7 @@
                 
                 <!-- Query input -->
                 <label for="query">Enter your query:</label><br>
-                <input type="text" id="query" name="query"><br><br>
+                <input class="form-control" type="text" id="query" name="query"><br><br>
                 
                 <!-- Submit Button -->
                 <input type="submit" value="Submit">
