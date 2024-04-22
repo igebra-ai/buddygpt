@@ -17,65 +17,60 @@
       flex-direction: column;
       justify-content: center; /* Center content vertically */
       align-items: center; /* Center content horizontally */
-      /*padding-top: 55px;*/
       padding-left: 250px;
-     /* padding-bottom: 10px;*/
-     
-    }
-    .main-container {
-    display: flex;
-    height: 100%;
     }
 
     .card {
-    position: relative;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid transparent rgb(255, 255, 255);
-    width: 100%;
-    padding-left: 60px;
-}
+      position: relative;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      min-width: 0;
+      word-wrap: break-word;
+      background-color: #fff;
+      background-clip: border-box;
+      border: 1px solid transparent rgb(255, 255, 255);
+      width: 100%;
+      padding-left: 60px;
+    }
 
-
-.dashboard-heading {
+    .dashboard-heading {
       font-size: 24px;
       font-weight: bold;
       margin-bottom: 40px;
-      color:rgb(76, 76, 76);
+      color: rgb(76, 76, 76);
       font-family:"DM Sans";
       padding-top: 9%;
     }
+
     .line {
       border-top: 2px solid white;
       margin-bottom: 20px;
     }
+
     .box-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
     }
+
     .box {
-      width: calc(45% - 50px);
-      height: 250px;
-      background-color: #f0f0f0;
-      margin-bottom: 90px;
-      margin-right: 50px;
-      padding: 20px;
-      box-sizing: border-box;
-      position: relative;
-    }
+  width: calc(45% - 50px);
+  height: auto; /* Change height to auto */
+  background-color: #f0f0f0;
+  margin-bottom: 90px;
+  margin-right: 50px;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+}
 
     .box-heading {
       font-size: 18px;
       margin-bottom: 10px;
       font-family: "DM Sans";
-      font-weight:medium;
+      font-weight: medium;
       position: absolute;
       top: -30px;
       left: 0;
@@ -85,8 +80,41 @@
       color: rgb(127, 127, 127);
     }
 
-    /*container for sidebar*/
-  </style>
+    .assessment-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+  /* Add margin-top and margin-bottom to center the table */
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+    .assessment-table th, .assessment-table td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .assessment-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .assessment-table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .view-results-btn {
+      cursor: pointer;
+      background-color: rgb(216, 27, 93);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+</style>
 {% endblock %}
 
 
@@ -94,33 +122,50 @@
 
 <div class="main-container">
   {% include 'sidebar.html' %}
-  
-
-<div class="chat-container">
-  <div class="card flex-grow-1 ">
-  <div class="card-body messages-box">
-      
-    <div class="dashboard-heading">Dashboard</div>
-  <div class="line"></div>
-  <div class="box-container">
-    <div class="box">
-      <div class="box-heading">Recent Assessments</div>
-    </div>
-    <div class="box">
-      <div class="box-heading">Recommendations</div>
-    </div>
-    <div class="box">
-      <div class="box-heading">Quick Tips</div>
-    </div>
-    <div class="box">
-      <div class="box-heading">Reports</div>
+  <div class="chat-container">
+    <div class="card flex-grow-1 ">
+      <div class="card-body messages-box">
+        <div class="dashboard-heading">Dashboard</div>
+        <div class="line"></div>
+        <div class="box-container">
+          <div class="box">
+            <div class="box-heading">Recent Assessments</div>
+            <table class="assessment-table">
+              <thead>
+                <tr>
+                  <th>Assessment ID</th>
+                  <th>Score</th>
+                  <th>Date Taken</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for assessment in recent_assessments %}
+                <tr>
+                  <td>{{ assessment.assessment_id }}</td>
+                  <td>{{ assessment.score }} / {{ assessment.max_score }}</td>
+                  <td>{{ assessment.date_taken|date:"Y-m-d" }}</td>
+                  <td>
+                    <button class="view-results-btn" onclick="showResultDetails('resultDetails{{ forloop.counter }}')">View Result Details</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="box">
+            <div class="box-heading">Recommendations</div>
+          </div>
+          <div class="box">
+            <div class="box-heading">Quick Tips</div>
+          </div>
+          <div class="box">
+            <div class="box-heading">Reports</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-  </div>
-  </div>
-  
-</div>
 </div>
 
 
