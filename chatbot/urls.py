@@ -6,10 +6,12 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     #path('', views.home, name='home'),
     path('assessment', views.assessment, name='assessment'),
-    path('chatbot', views.chatbot, name='chatbot'),
-    path('chat', views.chat, name='chat'),
-    
     path('', views.signin, name='signin'),
+    path('chat', views.chat, name='chat'),
+    path('chatbot', views.chatbot, name='chatbot'),
+
+    
+    #path('signin', views.signin, name='signin'),
     path('register', views.register, name='register'),
     path('logout', views.logout, name='logout'),
     path('activation_failed', views.activation_failed, name='activation_failed'),
@@ -21,18 +23,17 @@ urlpatterns = [
     path('true_n_false_interface/', views.true_n_false_interface, name='true_n_false_interface'),
     path('assessment_history/', views.assessment_history, name='assessment_history'),
     path('assessment_history/assessment', views.assessment, name='assessment'),
-    path('assessment_history/assessment_history', views.assessment_history, name='assessment_history'),
+    #path('assessment_history/assessment_history', views.assessment_history, name='assessment_history'),
     path('interface/assessment', views.assessment, name='assessment'),
-    path('true_n_false_interface/assessment', views.assessment, name='assessment'),
+    path('assessment', views.assessment, name='assessment'),
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('dashboard/dashboard', views.dashboard, name='dashboard'),
-    path('dashboard/assessment', views.assessment, name='assessment'),
+    #path('dashboard/assessment', views.assessment, name='assessment'),
 
     path('upload_document/', views.upload_document, name='upload_document'),
     path('rag_search', views.rag_search, name='rag_search'),
-    path('upload_document/dashboard', views.dashboard, name='dashboard'),
-    path('upload_document/assessment', views.assessment, name='assessment'),
-    path('upload_document/assessment_history', views.assessment_history, name='assessment_history'),
+    #path('upload_document/dashboard', views.dashboard, name='dashboard'),
+    #path('upload_document/assessment', views.assessment, name='assessment'),
+    #path('upload_document/assessment_history', views.assessment_history, name='assessment_history'),
 
 
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
