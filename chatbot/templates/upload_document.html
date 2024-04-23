@@ -1,8 +1,12 @@
+{% extends 'base.html' %}
+
 {% load custom_filters %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
+
+{% load static %}
+{% block styles %}
+
+
     <!-- Add your head content here -->
     <style>
         body {
@@ -120,13 +124,18 @@
             background-color: #a4163e; /* Darker color on hover */
         }
     </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    {% include 'sidebar.html' %}
+    
+    {% endblock %}
+    
+    {% block content %}
 
+ <!-- Sidebar -->
+ {% include 'sidebar.html' %}
+ 
     <!-- Main Content -->
     <div class="content">
+       
+
         <h1>Upload Documents</h1> 
 
         <!-- Display form errors -->
@@ -184,5 +193,5 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+
+    {% endblock %}
