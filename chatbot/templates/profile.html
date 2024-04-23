@@ -1,23 +1,57 @@
 {% extends 'base.html' %}
 
+{% block styles %}
+<style>
+    .main-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center content vertically */
+        align-items: center; /* Center content horizontally */
+        padding-left: 270px; */ /* Remove or adjust this line */
+    /* padding-bottom: 10px; */
+        margin-top: 15px;
+       
+      }
+      
+ 
+</style>
+{% endblock %}
+    
+
+{% block head %}
+<!-- Include Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<h1>{{ user.username }}'s Profile</h1>
-<div>
-    <strong>Profile Picture:</strong>
-    {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: 150px;">
-    {% else %}
-        <p>No profile picture uploaded.</p>
-    {% endif %}
+
+<div class="main-container">
+    {% include 'sidebar.html' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{ user.username }}'s Profile</h1>
+            <div class="card">
+                <div class="card-body">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture of {{ user.username }}" class="img-thumbnail mb-3" style="width: 150px; height: 150px;">
+                    {% else %}
+                        <p>No profile picture uploaded.</p>
+                    {% endif %}
+                    <p><strong>First Name:</strong> {{ user.fname }}</p>
+                    <p><strong>Last Name:</strong> {{ user.lname }}</p>
+                    <p><strong>Address Line 1:</strong> {{ profile.address_line_1 }}</p>
+                    <p><strong>Address Line 2:</strong> {{ profile.address_line_2 }}</p>
+                    <p><strong>City:</strong> {{ profile.city }}</p>
+                    <p><strong>State:</strong> {{ profile.state }}</p>
+                    <p><strong>Country:</strong> {{ profile.country }}</p>
+                    <p><strong>Contact No:</strong> {{ profile.contact_no }}</p>
+                    <a href="{% url 'edit-profile' %}" class="btn btn-primary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<br>
-<div><strong>First Name:</strong> {{ user.fname }}</div>
-<div><strong>Last Name:</strong> {{ user.lname }}</div>
-<div><strong>Address Line 1:</strong> {{ profile.address_line_1 }}</div>
-<div><strong>Address Line 2:</strong> {{ profile.address_line_2 }}</div>
-<div><strong>City:</strong> {{ profile.city }}</div>
-<div><strong>State:</strong> {{ profile.state }}</div>
-<div><strong>Country:</strong> {{ profile.country }}</div>
-<div><strong>Contact No:</strong> {{ profile.contact_no }}</div>
-<a href="{% url 'edit-profile' %}">Edit Profile</a>
+</div>
 {% endblock %}
