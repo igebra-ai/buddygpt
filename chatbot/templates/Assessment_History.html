@@ -20,7 +20,8 @@
   }
 
   .container {
-    margin-left: 250px; /* Adjust based on sidebar width */
+    margin-left: 300px;
+    margin-top: 20px; 
     padding: 20px;
     overflow: hidden;
   }
@@ -60,30 +61,22 @@
   }
 
   .result-details-popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 17%;
-    
-    width: 80%;
-    max-height: 80%;
-    
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000; /* Ensures popup is above all other content */
-  }
+  display: none;
+  position: fixed;
+  top: 50%; /* Center vertically */
+  left: 55%;
+  transform: translate(-50%, -50%); /* Center horizontally */
+  width: 48%;
+  max-height: 80%;
+  overflow-y: auto; /* Enable vertical scroll if content exceeds max height */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-bottom: 100px; /* Margin from the bottom */
+}
 
-  .close-popup {
-    cursor: pointer;
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
   
   .assessment-item {
     margin-bottom: 20px;
@@ -135,7 +128,7 @@
 
   .popup-overlay {
     display: none; /* Hide by default */
-    position: fixed; /* Stay in place */
+    /*position: fixed;  Stay in place */
     z-index: 1001; /* Sit on top */
     left: 0;
     top: 0;
@@ -144,6 +137,7 @@
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    margin-top: 100px;
   }
 
   .popup-content {
@@ -153,6 +147,18 @@
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
     border-radius: 10px; /* Optional: for rounded corners */
+    margin-bottom: 300px;
+  }
+
+  
+  .close-popup {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
   }
 
   .close-popup {
@@ -187,61 +193,20 @@
     justify-content: center; /* Aligns the button horizontally in the center */
     margin: 20px 0; /* Adds some space above and below the button */
   }
-
-  .navbar {
-    display: flex;
-    background-color: #efefef; /* Background color */
-    width: 100%;
-    padding-left: 17%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  }
-
-  .navbar-nav {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .nav-item {
-    margin-right: 10px; /* Adjust the spacing between nav items */
-  }
-
-  .nav-link {
-    color: #f44067; /* Text color */
-    text-decoration: none;
-    padding: 10px;
-    font-weight: bold;
-    margin-right: 5px; /* Adjust as needed */
-    padding-left: 10; /* Removes padding on the left */
-    padding-right: 0;
-  }
-
-  .nav-link:hover {
-    background-color: #cccccc; /* Hover background color */
-    color:#dc3265
-  }
-
+ 
 
 </style>
 {% endblock %}
 
 
 {% block content %}
-<nav class="navbar">
-  {% if user.is_authenticated %}
-  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
-  <a class="nav-link" style="margin-left: auto;font-size: 20px;" href="logout">Logout</a>
-  {% else %}
-  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
-  <a class="nav-link" style="margin-left: auto;" href="signin">Login</a>
-  <a class="nav-link" style="margin-left: auto;" href="register">Register</a>
-  {% endif %}
-</nav>
+
 <div class="sidebar">
   {% include 'sidebar.html' %}
 </div>
 <div class="container">
+  <h1 style="align-content: center;"> Past Assessments </h1> 
+  <br>
   <div class="statistics">
     <div class="stat-item">
       <p class="stat-title">Total Assessments</p>

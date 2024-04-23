@@ -1,8 +1,7 @@
-<!-- rag_test.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RAG Test</title>
+    <title>Test from Documents</title>
     <!-- Add your head content here -->
     <style>
         body {
@@ -72,6 +71,17 @@
             margin-right: 10px;
             background-color: #fff;
             border-radius: 5px;
+            cursor: pointer; /* Add cursor pointer for hover effect */
+            transition: background-color 0.3s ease; /* Add transition for smooth effect */
+        }
+        .documents-container .document.selected {
+            background-color: #d3d3d3; /* Change color for selected document */
+        }
+        .document-name {
+            color: #333; /* Change color for document name */
+        }
+        .document-name.selected {
+            color: #000; /* Change color for selected document name */
         }
     </style>
 </head>
@@ -88,8 +98,8 @@
         <div class="documents-container">
             <h2>Uploaded Documents</h2>
             {% for document in documents %}
-                <div class="document">
-                    <a href="{{ document.file.url }}" target="_blank">{{ document.name }}</a>
+                <div class="document" onclick="toggleSelection(this, '{{ document.id }}')" ondblclick="displayDocumentContent('{{ document.id }}')">
+                    <span class="document-name">{{ document.name }}</span>
                 </div>
             {% endfor %}
         </div>
@@ -106,13 +116,13 @@
         <!-- Form Container at the Bottom -->
         <div class="form-container">
             
-            <form action="{% url 'rag_test' %}" method="post">
+            <form action="{% url 'rag_search' %}" method="post">
                 {% csrf_token %}
 
         <!-- Dropdown for selecting document -->
         <div class="form-group">
             <label for="document">Select Document:</label>
-            <select class="form-control" name="document" required>
+            <select class="form-control" id="selectedDocument" name="document" required>
                 <option disabled selected value="">Select Document:</option>
                 {% for doc in documents %}
                     <option value="{{ doc.id }}">{{ doc.name }}</option>
@@ -131,6 +141,31 @@
         </div>
     </div>
 
+<script>
+    // Function to toggle selection on document click
+    function toggleSelection(element, documentId) {
+        // Remove selected class from all documents
+        var documents = document.getElementsByClassName('document');
+        var documentNames = document.getElementsByClassName('document-name');
+        for (var i = 0; i < documents.length; i++) {
+            documents[i].classList.remove('selected');
+            documentNames[i].classList.remove('selected');
+        }
+        // Add selected class to clicked document
+        element.classList.add('selected');
+        // Add selected class to document name
+        element.getElementsByClassName('document-name')[0].classList.add('selected');
+        // Update selected document in the form
+        document.getElementById('selectedDocument').value = documentId;
+    }
+
+    // Function to handle double click on document
+    function displayDocumentContent(documentId) {
+        // You can implement this function to display document content as desired
+        // For now, let's just log the document ID
+        console.log('Document content will be displayed for document ID:', documentId);
+    }
+</script>
 
 </body>
 </html>
