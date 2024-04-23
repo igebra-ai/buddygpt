@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .models import AssessmentQuestion, AssessmentHistory, Document
+from .models import AssessmentQuestion, AssessmentHistory, Document,Subject,AssessType
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
