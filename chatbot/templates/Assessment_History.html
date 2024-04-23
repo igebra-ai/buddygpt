@@ -188,41 +188,7 @@
     justify-content: center; /* Aligns the button horizontally in the center */
     margin: 20px 0; /* Adds some space above and below the button */
   }
-
-  .navbar {
-    display: flex;
-    background-color: #efefef; /* Background color */
-    width: 100%;
-    padding-left: 17%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  }
-
-  .navbar-nav {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .nav-item {
-    margin-right: 10px; /* Adjust the spacing between nav items */
-  }
-
-  .nav-link {
-    color: #f44067; /* Text color */
-    text-decoration: none;
-    padding: 10px;
-    font-weight: bold;
-    margin-right: 5px; /* Adjust as needed */
-    padding-left: 10; /* Removes padding on the left */
-    padding-right: 0;
-  }
-
-  .nav-link:hover {
-    background-color: #cccccc; /* Hover background color */
-    color:#dc3265
-  }
-
+ 
 
 </style>
 {% endblock %}
@@ -234,7 +200,8 @@
   {% include 'sidebar.html' %}
 </div>
 <div class="container">
-  <h1 style="align-content: center;"> Past Assessments </h1> <br>
+  <h1 style="align-content: center;"> Past Assessments </h1> 
+  <br>
   <div class="statistics">
     <div class="stat-item">
       <p class="stat-title">Total Assessments</p>
