@@ -10,6 +10,20 @@ class AssessmentQuestion(models.Model):
     def __str__(self):
         return self.question
     
+    
+class Subject(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.subject  
+    
+class AssessType(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.type  
 
 class AssessmentHistory(models.Model):
     assessment_id = models.CharField(max_length=255, primary_key=True)
