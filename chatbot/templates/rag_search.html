@@ -1,0 +1,127 @@
+<!-- rag_search.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>RAG Search</title>
+    <!-- Add your head content here -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #6e6d6d;
+            padding-top: 60px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .content {
+            flex: 1;
+            padding: 20px 20px 0 260px; /* 20px top, 20px right, 0 bottom, 260px left */
+            overflow-y: auto;
+        }
+        .response-container {
+            max-height: 50vh;
+            overflow-y: auto;
+            background-color: #f7f7f7;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            margin-top: auto; /* Push form to the bottom */
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .form-container form {
+            margin-bottom: 0; /* Remove default margin for the form */
+        }
+        .form-group {
+             margin-bottom: 25px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+        .documents-container {
+            max-height: 50vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap; /* Prevent line breaks */
+            background-color: #e0e0e0;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .documents-container .document {
+            display: inline-block;
+            padding: 10px;
+            margin-right: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    {% include 'sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Display uploaded documents horizontally -->
+        <div class="documents-container">
+            <h2>Uploaded Documents</h2>
+            {% for document in documents %}
+                <div class="document">
+                    <a href="{{ document.file.url }}" target="_blank">{{ document.name }}</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Response Container -->
+        <div class="response-container">
+            {% if response %}
+                <h2>Search Result:</h2>
+                <p>Query: {{ response.input }}</p>
+                <p>Answer: {{ response.answer }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Form Container at the Bottom -->
+        <div class="form-container">
+            <h1>RAG Search</h1>
+            <form action="{% url 'rag_search' %}" method="post">
+                {% csrf_token %}
+
+        <!-- Dropdown for selecting document -->
+        <div class="form-group">
+            <label for="document">Select Document:</label>
+            <select class="form-control" name="document" required>
+                <option disabled selected value="">Select Document:</option>
+                {% for doc in documents %}
+                    <option value="{{ doc.id }}">{{ doc.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+                
+                <!-- Query input -->
+                <label for="query">Enter your query:</label><br>
+                <input type="text" id="query" name="query"><br><br>
+                
+                <!-- Submit Button -->
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+
+
+</body>
+</html>
