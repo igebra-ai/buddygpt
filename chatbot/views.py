@@ -237,6 +237,7 @@ def interface(request):
     assessment_questions = AssessmentQuestion.objects.all()[:10]
     
     if request.method == 'POST':
+        user = request.user
         score = 0
         user_answers = []
         
@@ -245,7 +246,7 @@ def interface(request):
 
         # Generate a unique assessment ID
         last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
-        assessment_id = f"{last_assessment_number}"
+        assessment_id = f"{user.username}{last_assessment_number}"
         
         for question in assessment_questions:
             selected_option_key = f'selected_options_{question.id}'
@@ -593,6 +594,27 @@ def dashboard(request):
         return redirect('signin')
     
     # Fetch the top 5 rows from the assessment_history table
-    recent_assessments = AssessmentHistory.objects.all().order_by('-date_taken')[:5]
+    #recent_assessments = AssessmentHistory.objects.all().order_by('-date_taken')[:5]
+
+    # Fetch the top 5 history records for the current user in reverse order from the AssessmentHistory database
+    user_assessment_history = AssessmentHistory.objects.filter(user=request.user).order_by('-date_taken')[:5]
+    total_assessments = user_assessment_history.count()
+    average_score = user_assessment_history.aggregate(Avg('score'))['score__avg'] or 0
+
+    # Example data for graph (modify as needed)
+    scores = list(user_assessment_history.values_list('score', flat=True))
+     
+    for history in user_assessment_history:
+            # Parse the JSON string into a Python object
+        history.result_details = json.loads(history.result_details)
+        
+    # Pass these to the context
+    context = {
+        'assessment_history': user_assessment_history,
+        'total_assessments': total_assessments,
+        'average_score': average_score,
+        'scores': scores,
+        
+    }
     
-    return render(request, 'dashboard.html', {'recent_assessments': recent_assessments})
+    return render(request, 'dashboard.html', context)
