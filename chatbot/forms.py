@@ -14,3 +14,11 @@ class DocumentForm(forms.ModelForm):
             raise forms.ValidationError("File format not supported. Please upload a txt, pdf, doc, docx, or csv file.")
 
         return file
+
+
+from .models import Profile
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['address_line_1', 'address_line_2', 'city', 'state', 'country', 'contact_no', 'profile_picture']

@@ -134,14 +134,25 @@
     </div>
     <div class="footer">
       <div>
-        {% if user.is_authenticated %}
-        <img src="{% static 'images/user-icon.png' %}" alt="img" style="width:50px; height: 40px;">
-        <span style="margin-left: 10px;">  {{ user.username}}</span>
-        {% else %}
-        <span style="margin-left: 10px;">User</span>
-        {% endif %}
+          {% if user.is_authenticated %}
+              {% if user.profile.profile_picture %}
+                  <!-- Profile picture as a clickable link -->
+                  <a href="{% url 'view-profile' %}">
+                      <img src="{{ user.profile.profile_picture.url }}" alt="Profile picture of {{ user.username }}" style="width:50px; height: 40px;">
+                  </a>
+              {% else %}
+                  <!-- Default profile icon as a clickable link -->
+                  <a href="{% url 'view-profile' %}">
+                      <img src="{% static 'images/default-user-icon.png' %}" alt="Default profile picture" style="width:50px; height: 40px;">
+                  </a>
+              {% endif %}
+              <span style="margin-left: 10px;">{{ user.username }}</span>
+          {% else %}
+              <span style="margin-left: 10px;">Guest</span>
+          {% endif %}
       </div>
-    </div>
+  </div>
+    
   </div>
 </body>
 </html>

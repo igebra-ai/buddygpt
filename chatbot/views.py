@@ -246,7 +246,7 @@ def interface(request):
 
         # Generate a unique assessment ID
         last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
-        assessment_id = f"{user.username}{last_assessment_number}"
+        assessment_id = f"{user.username}-{last_assessment_number}"
         
         for question in assessment_questions:
             selected_option_key = f'selected_options_{question.id}'
@@ -615,6 +615,30 @@ def dashboard(request):
         'average_score': average_score,
         'scores': scores,
         
-    }
-    
+    }   
+
     return render(request, 'dashboard.html', context)
+
+
+from django.shortcuts import render, redirect
+from .forms import ProfileForm
+from .models import Profile
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to a relevant page after saving
+    else:
+        form = ProfileForm(instance=request.user.profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
+
+@login_required
+def view_profile(request):
+    profile = Profile.objects.get(user=request.user)  # Fetch the profile for the logged-in user
+    return render(request, 'profile.html', {'profile': profile})
+
