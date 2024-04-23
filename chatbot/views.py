@@ -596,3 +596,25 @@ def dashboard(request):
     recent_assessments = AssessmentHistory.objects.all().order_by('-date_taken')[:5]
     
     return render(request, 'dashboard.html', {'recent_assessments': recent_assessments})
+
+from django.shortcuts import render, redirect
+from .forms import ProfileForm
+from .models import Profile
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to a relevant page after saving
+    else:
+        form = ProfileForm(instance=request.user.profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
+
+@login_required
+def view_profile(request):
+    profile = Profile.objects.get(user=request.user)  # Fetch the profile for the logged-in user
+    return render(request, 'profile.html', {'profile': profile})

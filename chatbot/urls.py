@@ -9,6 +9,9 @@ urlpatterns = [
     path('', views.signin, name='signin'),
     path('chat', views.chat, name='chat'),
     path('chatbot', views.chatbot, name='chatbot'),
+    
+    path('edit-profile/', views.edit_profile, name='edit-profile'),
+    path('profile/', views.view_profile, name='view-profile'),
 
     
     #path('signin', views.signin, name='signin'),
