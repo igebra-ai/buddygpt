@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('upload_document/', views.upload_document, name='upload_document'),
     path('rag_search', views.rag_search, name='rag_search'),
+    path('rag_test', views.rag_test, name='rag_test'),
     #path('upload_document/dashboard', views.dashboard, name='dashboard'),
     #path('upload_document/assessment', views.assessment, name='assessment'),
     #path('upload_document/assessment_history', views.assessment_history, name='assessment_history'),

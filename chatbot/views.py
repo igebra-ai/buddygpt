@@ -508,6 +508,85 @@ def rag_search(request):
     }
     return render(request, 'rag_search.html', context)
 
+def rag_test(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin') 
+    # Retrieve all documents uploaded by the user
+    documents = Document.objects.all()
+
+    if request.method == 'POST':
+        # Get the user's query and selected document ID from the form
+        query = request.POST.get('query', '')
+        selected_doc_id = request.POST.get('document')
+
+        # Retrieve the selected document object
+        selected_document = Document.objects.get(id=selected_doc_id)
+
+        if selected_document.file.name.endswith('.txt'):
+            # Load text from text file
+            loader = TextLoader(selected_document.file.path, encoding="utf-8")
+            loaded_text = loader.load()
+            document_chunks = loaded_text
+        elif selected_document.file.name.endswith('.pdf'):
+            # Load text from PDF file
+            loader = PyPDFLoader(selected_document.file.path)
+            loaded_pdf = loader.load()
+            document_chunks = loaded_pdf
+
+        # Create a text splitter instance
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
+
+        # Split the document into smaller chunks
+        document_chunks = text_splitter.split_documents(document_chunks)
+
+        # Create a FAISS vector database from the documents
+        db = FAISS.from_documents(document_chunks, OpenAIEmbeddings())
+
+        # Load the GPT-3.5-turbo model
+        llm = ChatOpenAI(model="gpt-3.5-turbo")
+
+        # Design a chat prompt template
+        prompt = ChatPromptTemplate.from_template(
+            """ 
+            Answer the following question based only on the provided context.
+            Think step by step before providing a detailed answer.
+            I will tip you $1000 if the user finds the answer helpful.
+            <context>
+            {context}
+            </context>
+            Question: {input}"""
+        )
+
+        # Create a document chain for processing documents
+        document_chain = create_stuff_documents_chain(llm, prompt)
+
+        # Convert the FAISS vector database to a retriever
+        retriever = db.as_retriever()
+
+        # Create a retrieval chain with the retriever and document chain
+        retrieval_chain = create_retrieval_chain(retriever, document_chain)
+
+        # Invoke the retrieval chain with the user's query
+        response = retrieval_chain.invoke({"input": query})
+
+        # Modify the response to include only 'input' and 'answer'
+        response = {'input': response['input'], 'answer': response['answer']}
+
+        # Pass the documents, query, and response to the template
+        context = {
+            'documents': documents,
+            'query': query,
+            'response': response,
+        }
+        return render(request, 'rag_test.html', context)
+
+    # Pass the documents to the template for GET requests
+    context = {
+        'documents': documents,
+    }
+    return render(request, 'rag_test.html', context)
+
 def dashboard(request):
     if not request.user.is_authenticated:
         # Redirect the user to the login page if not authenticated

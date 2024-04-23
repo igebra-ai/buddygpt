@@ -1,8 +1,8 @@
-<!-- rag_search.html -->
+<!-- rag_test.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RAG Search</title>
+    <title>RAG Test</title>
     <!-- Add your head content here -->
     <style>
         body {
@@ -81,7 +81,7 @@
 
     <!-- Main Content -->
     <div class="content">
-        <h2 style="margin-left: 60px;">Learn from Documents</h2> 
+        <h2 style="margin-left: 60px;">Test from Documents</h2> 
         
         <!-- Display uploaded documents horizontally -->
               
@@ -106,7 +106,7 @@
         <!-- Form Container at the Bottom -->
         <div class="form-container">
             
-            <form action="{% url 'rag_search' %}" method="post">
+            <form action="{% url 'rag_test' %}" method="post">
                 {% csrf_token %}
 
         <!-- Dropdown for selecting document -->
