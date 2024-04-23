@@ -33,6 +33,9 @@ class AssessmentHistory(models.Model):
     result_details = models.JSONField()
     # Add a datetime field to store the timestamp of the assessment
     date_taken = models.DateTimeField(auto_now_add=True, null=False)
+    subjects = models.ForeignKey('Subject', on_delete=models.CASCADE , related_name='assessments')
+    assess_type = models.ForeignKey(AssessType, on_delete=models.CASCADE)  # Link to AssessType
+    
 
     def __str__(self):
         return f"Assessment History ID: {self.assessment_id} - User: {self.user.username}"

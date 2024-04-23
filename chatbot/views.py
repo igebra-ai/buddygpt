@@ -200,6 +200,18 @@ def assessment(request):
         return redirect('signin') 
     if request.method == 'POST':
         message = request.POST.get('message')
+        
+        subject_name = request.POST.get('subject') 
+        # Create or get the subject
+        subject, created = Subject.objects.get_or_create(user=request.user, subject=subject_name)
+        
+        request.session['current_subject_id'] = subject.id
+        
+        assess_type = request.POST.get('type') 
+        # Create or get the subject
+        type, created = AssessType.objects.get_or_create(user=request.user, type=assess_type)
+        request.session['current_assess_type'] = type.type
+        
         response = generate_assessment(message)    
       
         # Print the response data for debugging
