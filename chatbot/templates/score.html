@@ -320,7 +320,7 @@
   </div>
   <hr>
   <h3><p style="font-size: 18px;"><strong>Your score is: {{ score }} / {{ max_score }}</strong></p></h3>
-  {% if incorrect_answers %}
+  {% if score < max_score %}
   <div class="box">
     <h3 style="font-size: 19px;">Incorrect Answers</h3>
     <ul>
