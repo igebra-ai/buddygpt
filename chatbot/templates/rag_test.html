@@ -1,6 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
     <title>Test from Documents</title>
     <!-- Add your head content here -->
     <style>
@@ -84,8 +84,10 @@
             color: #000; /* Change color for selected document name */
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+
+{% block content %}
     <!-- Sidebar -->
     {% include 'sidebar.html' %}
 
@@ -167,5 +169,4 @@
     }
 </script>
 
-</body>
-</html>
+{% endblock %}

@@ -1,10 +1,8 @@
+{% extends 'base.html' %}
+{% load static %}
 {% load custom_filters %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Add your head content here -->
-    <style>
+{% block styles %}
+<style>
         body {
             margin: 0;
             padding: 0;
@@ -119,9 +117,11 @@
         .form-group button:hover {
             background-color: #a4163e; /* Darker color on hover */
         }
-    </style>
-</head>
-<body>
+</style>
+{% endblock %}
+
+
+{% block content %}
     <!-- Sidebar -->
     {% include 'sidebar.html' %}
 
@@ -184,5 +184,5 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+
+{% endblock %}
