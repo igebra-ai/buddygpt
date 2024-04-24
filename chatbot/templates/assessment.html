@@ -137,6 +137,16 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .form-group-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-group {
+  margin-left: 20px;
+  margin-right: 20px; /* Adjust spacing between form groups */
+}
 </style>
 {% endblock %}
 
@@ -221,9 +231,20 @@
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="num_questions">Enter Number of Questions:</label>
-            <input type="number" class="form-control" name="num_questions" min="1"  max="10" required>
+          <div class="form-group-container">
+            <div class="form-group" style="width:40%;">
+              <label for="num_questions">Enter Number of Questions:</label>
+              <input type="number" class="form-control" name="num_questions" min="1" max="10" required>
+            </div>
+          
+            <div class="form-group" style="width:20%;">
+              <label for="level">Difficulty:</label>
+              <select class="form-control" name="level" required>
+                <option disabled value="">Difficulty level:</option>
+                <option value="Easy">Easy</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-send">Generate Assessment</button>
@@ -243,6 +264,7 @@
   const topicsInput = document.querySelector('[name="topics"]');
   const assessmentTypeSelect = document.querySelector('[name="assessment_type"]');
   const numQuestionsInput = document.querySelector('[name="num_questions"]');
+  const levelInput = document.querySelector('[name="level"]');
 
   const loadingIndicator = document.getElementById('loadingIndicator');
 
@@ -257,6 +279,7 @@
     const topics = topicsInput.value;
     const assess_type = assessmentTypeSelect.value;
     const num_ques = numQuestionsInput.value;
+    const level = levelInput.value;
 
     let assessmentUrl = '';
 
@@ -266,7 +289,7 @@
       assessmentUrl = '/true_n_false_interface';
     }
 
-    const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics} for the subject ${message} for a student of grade ${grade}.`;
+    const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics} for the subject ${message} for a student of grade ${grade} of ${level} difficulty type.`;
 
     const messageItem = document.createElement('li');
     messageItem.classList.add('message', 'sent');

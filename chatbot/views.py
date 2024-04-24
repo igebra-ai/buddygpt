@@ -183,7 +183,7 @@ def generate_assessment(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a Multiple Choice Questions generator bot. Output should contain question, options and asnwer in a JSON format. "},
+            {"role": "system", "content": "You are a Multiple Choice Questions generator bot. Output should contain Question, 4 Option choices and Answer in a JSON format. "},
             {"role": "user", "content": message},
         ]
     )

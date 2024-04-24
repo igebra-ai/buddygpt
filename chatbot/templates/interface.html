@@ -129,12 +129,16 @@
         <p class="card-text">{{ question.question }}</p>
         <h5 class="card-title">Options:</h5>
         <ul class="list-group">
+          
+          <!--Problematic part starts-->
           {% for option in question.options %}
           <li class="list-group-item">
             <input type="radio" name="selected_options_{{ question.id }}" value="{{ option }}" id="option_{{ question.id }}_{{ forloop.counter }}">
             <label for="option_{{ question.id }}_{{ forloop.counter }}">{{ option }}</label>
           </li>
           {% endfor %}
+          <!--Problematic part ends-->
+
         </ul>
       </div>
     </div>
