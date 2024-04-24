@@ -1,6 +1,7 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block styles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Search from Documents</title>
     <!-- Add your head content here -->
     <style>
         body {
@@ -83,12 +84,8 @@
             color: #000; /* Change color for selected document name */
         }
     </style>
-
-    {% endblock %}
-    
-    {% block content %}
-
-
+</head>
+<body>
     <!-- Sidebar -->
     {% include 'sidebar.html' %}
 
@@ -170,4 +167,5 @@
     }
 </script>
 
-{% endblock %}
+</body>
+</html>
