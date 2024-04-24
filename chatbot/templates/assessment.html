@@ -160,6 +160,37 @@
         <br>
         <form class="message-form">
           {% csrf_token %}
+          <!--Grade Added-->
+          <div class="form-group">
+            <label for="grade">Select Grade:</label>
+            <select class="form-control" style="width:12%;" name="grade"  required>
+              <option disabled value="">Select your Grade:</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <!--Board added-->
+          
+          <div class="form-group" style="display: inline-block;">
+            <label for="board">Board:</label>
+            <select class="form-control" style="width:15%" name="board" required>
+              <option disabled value="">Select your Education Board:</option>
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <!-- Add more options for boards as needed -->
+            </select>
+          </div>
+          
+          
           <div class="form-group">
             <label for="subjects">Select Subjects:</label>
             <select class="form-control" name="subjects"  required>
@@ -207,6 +238,7 @@
 <script>
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
+  const gradeInput = document.querySelector('[name="grade"]');
   const messageInput = document.querySelector('[name="subjects"]');
   const topicsInput = document.querySelector('[name="topics"]');
   const assessmentTypeSelect = document.querySelector('[name="assessment_type"]');
@@ -220,6 +252,7 @@
     // Show the loading indicator
     loadingIndicator.style.display = 'block';
 
+    const grade = gradeInput.value;
     const message = messageInput.value;
     const topics = topicsInput.value;
     const assess_type = assessmentTypeSelect.value;
@@ -233,7 +266,7 @@
       assessmentUrl = '/true_n_false_interface';
     }
 
-    const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics} for the subject ${message}`;
+    const combinedMessage = `Generate ${num_ques} ${assess_type} on ${topics} for the subject ${message} for a student of grade ${grade}.`;
 
     const messageItem = document.createElement('li');
     messageItem.classList.add('message', 'sent');

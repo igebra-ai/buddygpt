@@ -425,6 +425,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import Document
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
+from langchain_community.document_loaders.csv_loader import CSVLoader 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -457,6 +458,11 @@ def rag_search(request):
             loader = PyPDFLoader(selected_document.file.path)
             loaded_pdf = loader.load()
             document_chunks = loaded_pdf
+        elif selected_document.file.name.endswith('.csv'):
+            # Load text from PDF file
+            loader = CSVLoader(selected_document.file.path, encoding="utf-8")
+            loaded_csv = loader.load()
+            document_chunks = loaded_csv
 
         # Create a text splitter instance
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
@@ -536,6 +542,11 @@ def rag_test(request):
             loader = PyPDFLoader(selected_document.file.path)
             loaded_pdf = loader.load()
             document_chunks = loaded_pdf
+        elif selected_document.file.name.endswith('.csv'):
+            # Load text from PDF file
+            loader = CSVLoader(selected_document.file.path, encoding="utf-8")
+            loaded_csv = loader.load()
+            document_chunks = loaded_csv
 
         # Create a text splitter instance
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
