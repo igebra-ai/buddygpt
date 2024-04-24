@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     #path('', views.home, name='home'),
     path('assessment', views.assessment, name='assessment'),
-    path('', views.signin, name='signin'),
+    path('signin', views.signin, name='signin'),
     path('chat', views.chat, name='chat'),
     path('chatbot', views.chatbot, name='chatbot'),
     
@@ -19,7 +19,8 @@ urlpatterns = [
     path('logout', views.logout, name='logout'),
     path('activation_failed', views.activation_failed, name='activation_failed'),
     path('activate/<uidb64>/<token>', views.activate, name='activate'),
-    
+    path('', views.about, name='about'),
+
     path('interface/', views.interface, name='interface'),
     path('interface/assessment_history', views.assessment_history, name='assessment_history'),
     path('one_line_interface/', views.one_line_interface, name='one_line_interface'),

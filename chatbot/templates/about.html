@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+<head>
+  <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
+  <style>
+    body, html {
+      height: 100%;
+    }
+
+    .chat-container {
+      display: flex;
+      height: 624px;
+      width:100%;
+      opacity: 1;
+      background:  #e5ecf5;;
+      border-radius: 8px;
+      box-shadow: #e3efff 1px 4px 8px;
+      border: 0px;
+    }
+
+    .left-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .right-section {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .main-container {
+      display: flex;
+      height: 90%;
+      width: 99%;
+      padding: 50px;
+      left: 6px;
+      position: relative; /* Make the main-container position relative */
+    }
+
+    .navbar {
+      display: flex;
+      background-color:  rgb(255, 255, 255);
+      width: 100%;
+      padding-left: 10%; /* Adjusted padding */
+      box-shadow: rgb(146, 143, 143) 1px 4px 8px;
+    }
+
+    .navbar-nav {
+      display: flex;
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-item {
+      margin-right: 10px;
+    }
+
+    .nav-link {
+      color: #f44067;
+      text-decoration: none;
+      padding: 10px;
+      font-weight: bold;
+      margin-right: 5px;
+      padding-left: 10px;
+      padding-right: 0;
+    }
+
+    .nav-link:hover {
+      color: #dc3265;
+    }
+
+    nav img { 
+      visibility: visible;
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      border-radius: 8px;
+      border: 0px;
+      vertical-align: middle; 
+      padding-left: 0; /* Adjusted padding */
+      margin-left: -171px;
+      width: 170px; 
+      height: 43px;
+    }
+
+    .signup-login {
+      margin-left: auto; /* Pushes the links to the right */
+      display: flex; /* Display the links as flex items */
+    }
+
+    .signup-login a {
+      margin-right: 10px; /* Add some space between the links */
+    }
+
+    .main-container img {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      
+      margin-bottom: 20px;
+      margin-right: 20px;
+    }
+
+    .typed-wrap {
+      border-right: 0.08em solid #fff;
+      margin-top: -250px;
+
+    }
+
+    .left-section h1{
+      margin-top: -250px;
+      margin-left: 20px;
+      position: relative;
+    }
+
+    .left-section span{
+      color: rgb(3, 3, 91);
+      
+      font-size: 40px;
+      font-family: "DM Sans";
+      font-weight: bold;
+    }
+
+    .left-section p{
+      margin-top: 40px;
+      font-family: "DM Sans";
+      font-size: 20px;
+      color: rgb(6, 6, 36);
+      margin-left: 20px;
+
+    }
+
+    .left-section a{
+      text-decoration: none;
+      
+
+    }
+
+    .right-section img{
+      width: 50px;
+  height: 50px;
+  position: absolute; /* Make the image position absolute */
+  top: 50%; /* Move the image 50% from the top */
+  left: 50%; /* Move the image 50% from the left */
+  transform: translate(-50%, -50%); /* Center the image */
+    }
+
+
+
+    .try-now-button {
+  /* Button styles */
+  position: absolute; /* Position the button relative to its parent */
+  bottom: 192px; /* Adjust the distance from the bottom */
+  margin-left: 20px;
+  padding: 10px 20px; /* Add padding to the button */
+  background-color: #f1f2ff; /* Light purple background color */
+  color: navy; /* Dark blue text color */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Apply border radius */
+  font-size: 16px; /* Set font size */
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(110, 105, 151, 0.2); /* Light purple box shadow */
+}
+
+.try-now-button:hover {
+  /* Hover effect */
+  background-color: #e0d9ff; /* Darker shade of purple on hover */
+  box-shadow: 0 6px 12px rgba(110, 105, 151, 0.3); /* Slightly stronger shadow on hover */
+}
+
+  </style>
+</head>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar">
+  <img src="{% static 'images/buddy-gpt-black.png' %}">
+  <div class="signup-login">
+    <a class="nav-link" href="{% url 'register' %}">Signup</a>
+    <a class="nav-link" href="{% url 'signin' %}">Login</a>
+  </div>
+</nav>
+<div class="main-container">
+  <img src="{% static 'buddy.gif' %}">
+  <div class="chat-container">
+    <div class="left-section">
+      <!-- Left section content (text) goes here -->
+      <h1 >
+        <a href="" style="margin-top: -240px;" class="typewrite" data-period="2000" data-type='BuddyGPT: Your AI-Powered Study Buddy, 
+        Here is what BuddyGPT can do for you:, ' 
+        data-description='BuddyGPT is your AI-powered study companion. It personalizes your learning by recommending content based on your strengths and weaknesses. BuddyGPT creates adaptive assessments to accurately gauge your understanding. Gain valuable insights into your progress and get instant help with clear explanations. Let BuddyGPT be your secret weapon for smarter and more effective learning!, 
+        BuddyGPT personalizes your learning journey by tailoring content and assessments to your strengths and weaknesses. No more generic tests! BuddyGPT creates adaptive assessments that match your progress giving you an accurate picture of your knowledge. Gain valuable insights as BuddyGPT tracks your learning and provides data-driven feedback to pinpoint areas for improvement. With a user-friendly interface and AI-powered assistance you can get instant answers and clear explanations to solidify your understanding. BuddyGPT simplifies learning and empowers you to achieve academic success., , ]'>
+          <span class="typed-wrap"></span>
+        </a>
+      </h1>
+      <p id="description"></p> <!-- Description will be displayed here -->
+
+      <div style="margin-top: 20px;"> <!-- Add margin-top to separate from text -->
+        <a href="{% url 'signin' %}" class="try-now-button">Try Now</a> <!-- Link to register page -->
+      </div>
+    </div>
+    <div class="right-section">
+      <!-- Right section content (image) goes here 
+      <img src="{% static 'images/view.png' %}">-->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var TxtType = function(el, toRotate, period, description) {
+    this.toRotate = toRotate;
+    this.description = description.map(function(desc) { return desc.trim(); }); // Trim descriptions
+    this.el = el;
+    this.loopNum = 0;
+    this.period = parseInt(period, 10) || 2000;
+    this.txt = '';
+    this.tick();
+    this.isDeleting = false;
+  };
+
+  TxtType.prototype.tick = function() {
+    var i = this.loopNum % this.toRotate.length;
+    var fullTxt = this.toRotate[i];
+    var description = this.description[i]; // Get description for the current text
+
+    if (this.isDeleting) {
+      this.txt = fullTxt.substring(0, this.txt.length - 1);
+    } else {
+      this.txt = fullTxt.substring(0, this.txt.length + 1);
+    }
+
+    this.el.querySelector('.typed-wrap').innerHTML = this.txt;
+
+    // Update description
+    document.getElementById('description').innerText = description;
+
+    var that = this;
+    var delta = 200 - Math.random() * 100;
+
+    if (this.isDeleting) { delta /= 2; }
+
+    if (!this.isDeleting && this.txt === fullTxt) {
+      delta = this.period;
+      this.isDeleting = true;
+    } else if (this.isDeleting && this.txt === '') {
+      this.isDeleting = false;
+      this.loopNum++;
+      delta = 500;
+    }
+
+    setTimeout(function() {
+      that.tick();
+    }, delta);
+  };
+
+  window.onload = function() {
+    var elements = document.getElementsByClassName('typewrite');
+    for (var i=0; i<elements.length; i++) {
+      var toRotate = elements[i].getAttribute('data-type').split(',');
+      var period = elements[i].getAttribute('data-period');
+      var description = elements[i].getAttribute('data-description').split(',').map(function(desc) { return desc.trim(); }); // Get descriptions and trim
+      if (toRotate) {
+        new TxtType(elements[i], toRotate, period, description); // Pass descriptions
+      }
+    }
+  };
+</script>
+{% endblock %}

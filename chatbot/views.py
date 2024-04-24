@@ -654,3 +654,6 @@ def edit_profile(request):
 def view_profile(request):
     profile = Profile.objects.get(user=request.user)  # Fetch the profile for the logged-in user
     return render(request, 'profile.html', {'profile': profile})
+
+def about(request):
+    return render(request, 'about.html')
