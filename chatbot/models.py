@@ -9,7 +9,20 @@ class AssessmentQuestion(models.Model):
 
     def __str__(self):
         return self.question
+
+class Sub(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sub = models.CharField(max_length=100)
     
+    def __str__(self):
+        return self.sub
+    
+class Assess(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    types = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.types
     
  
 
@@ -21,7 +34,8 @@ class AssessmentHistory(models.Model):
     result_details = models.JSONField()
     # Add a datetime field to store the timestamp of the assessment
     date_taken = models.DateTimeField(auto_now_add=True, null=False)
-    
+    subjects = models.ForeignKey('Sub', on_delete=models.CASCADE)  # Assuming 'Sub' is your subject model
+    assess_type = models.ForeignKey('Assess', on_delete=models.CASCADE)  # Assuming 'Assess' is your assessment type model
 
     def __str__(self):
         return f"Assessment History ID: {self.assessment_id} - User: {self.user.username}"

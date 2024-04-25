@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .models import AssessmentQuestion, AssessmentHistory, Document
+from .models import AssessmentQuestion, AssessmentHistory, Document,Sub,Assess
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
@@ -203,11 +203,16 @@ def assessment(request):
         
         subject_name = request.POST.get('sub') 
         # Create or get the subject
+        sub, created = Sub.objects.get_or_create(user=request.user, sub=subject_name)
         
+        request.session['current_subject_id'] = sub.id
         
-        assess_type = request.POST.get('assess') 
+        assess_type_name = request.POST.get('assess')
         # Create or get the subject
-       
+        
+
+        assess_type, created = Assess.objects.get_or_create(user=request.user, types=assess_type_name)
+        request.session['current_assess_type_id'] = assess_type.id  # Optionally, store in session
 
         response = generate_assessment(message)
 
@@ -242,6 +247,13 @@ def assessment(request):
 
 
 def interface(request):
+    
+    current_subject_id = request.session.get('current_subject_id', None)
+    current_assess_type_id = request.session.get('current_assess_type_id', None)
+
+    current_subject = Sub.objects.get(id=current_subject_id) if current_subject_id else None
+    current_assess_type = Assess.objects.get(id=current_assess_type_id) if current_assess_type_id else None
+
     # Fetch the first 5 questions for display
     assessment_questions = AssessmentQuestion.objects.all()[:10]
 
@@ -249,6 +261,8 @@ def interface(request):
         user = request.user
         score = 0
         user_answers = []
+        
+        
 
         # Calculate the total number of questions for the max score
         max_score = len(assessment_questions)
@@ -292,9 +306,15 @@ def interface(request):
             'max_score': max_score,
             'user_answers': user_answers,
         })
+        
+    context = {
+        'assessment_questions': assessment_questions,
+        'subject': current_subject.sub if current_subject else 'No subject selected',
+        'assess_type': current_assess_type.types if current_assess_type else 'No assessment type selected'
+    }    
 
     # Display the questions if the method is not POST
-    return render(request, 'interface.html', {'assessment_questions': assessment_questions})
+    return render(request, 'interface.html', context)
 
 def one_line_interface(request):
     # Fetch the first 5 one-line questions for display
