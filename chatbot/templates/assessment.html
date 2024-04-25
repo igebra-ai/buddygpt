@@ -309,7 +309,9 @@ AI-Assessments
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': combinedMessage
+        'message': combinedMessage,
+        'sub': message,
+        'assess': assess_type
       })
     })
       .then(response => response.json())

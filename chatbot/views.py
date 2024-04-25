@@ -200,7 +200,14 @@ def assessment(request):
         return redirect('signin')
     if request.method == 'POST':
         message = request.POST.get('message')
-
+        
+        subject_name = request.POST.get('sub') 
+        # Create or get the subject
+        
+        
+        assess_type = request.POST.get('assess') 
+        # Create or get the subject
+       
 
         response = generate_assessment(message)
 
