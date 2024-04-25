@@ -204,7 +204,6 @@ def assessment(request):
         topic = request.POST.get('topic')
         assess_type = request.POST.get('type')
 
-
         response = generate_assessment(message)
 
         # Print the response data for debugging
@@ -260,6 +259,7 @@ def assessment(request):
 
 
 def interface(request):
+
     assessment_questions = AssessmentQuestion.objects.all()[:10]
     assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
     assessment_topic = AssessmentTopic.objects.first()
@@ -325,7 +325,8 @@ def interface(request):
             'max_score': max_score,
             'user_answers': user_answers,
         })
-
+        
+    
     return render(request, 'interface.html', {'assessment_questions': assessment_questions})
 
 

@@ -9,6 +9,10 @@ class AssessmentQuestion(models.Model):
 
     def __str__(self):
         return self.question
+
+class Sub(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sub = models.CharField(max_length=100)
     
 class AssessmentSubject(models.Model):
     subject = models.CharField(max_length=255)  
@@ -32,7 +36,7 @@ class AssessmentHistory(models.Model):
     topic = models.CharField(max_length=255)    # New field for topic
     type = models.CharField(max_length=255) 
     
-
+    
     def __str__(self):
         return f"Assessment History ID: {self.assessment_id} - User: {self.user.username}"
 
