@@ -183,7 +183,7 @@ def generate_assessment(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a Multiple Choice Questions generator bot. Output should contain Question, 4 Option choices and Answer in a JSON format. "},
+            {"role": "system", "content": "You are a Multiple Choice Questions generator bot. Output should contain question, options and answer in a JSON format. The value for key 'options' should be a python list."},
             {"role": "user", "content": message},
         ]
     )
@@ -218,15 +218,15 @@ def assessment(request):
 
         # Create AssessmentQuestion objects for each question
         for question_data in questions_data:
-            question = question_data["question"]
-            options = question_data.get("options", [])  # Use get() to handle missing keys gracefully
-            answer = question_data.get("answer", "")  # Use get() to handle missing keys gracefully
+            Question = question_data["question"]
+            Options = question_data.get("options", [])  # Use get() to handle missing keys gracefully
+            Answer = question_data.get("answer", "")  # Use get() to handle missing keys gracefully
 
             # Create and save the AssessmentQuestion object
             assessment_question = AssessmentQuestion.objects.create(
-                question=question,
-                options=options,
-                answer=answer,
+                question=Question,
+                options=Options,
+                answer=Answer,
             )
             assessment_question.save()
 
