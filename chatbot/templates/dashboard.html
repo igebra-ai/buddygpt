@@ -146,7 +146,7 @@ Dashboard
         <tr>
           <th>Assessment ID</th>
           <th>Score</th>
-          <th>Date Taken</th>
+          <th>Subject</th>
         </tr>
       </thead>
       <tbody>
@@ -154,7 +154,7 @@ Dashboard
         <tr>
           <td>{{ history.assessment_id }}</td>
           <td>{{ history.score }} / {{history.max_score}}</td>
-          <td>{{ history.date_taken|date:"Y-m-d " }}</td> 
+          <td>{{ history.subject }}</td> 
         </tr>
         {% endfor %}
       </tbody>

@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .models import AssessmentQuestion, AssessmentHistory, Document
+from .models import AssessmentQuestion, AssessmentHistory, Document, AssessmentSubject, AssessmentTopic, AssessmentFormat
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
@@ -200,6 +200,9 @@ def assessment(request):
         return redirect('signin')
     if request.method == 'POST':
         message = request.POST.get('message')
+        subject = request.POST.get('subject')
+        topic = request.POST.get('topic')
+        assess_type = request.POST.get('type')
 
 
         response = generate_assessment(message)
@@ -213,8 +216,29 @@ def assessment(request):
         # Clear existing AssessmentQuestion objects
         AssessmentQuestion.objects.all().delete()
 
+        # Clear existing AssessmentSubject objects
+        AssessmentSubject.objects.all().delete()
+
+        # Clear existing AssessmentTopic objects
+        AssessmentTopic.objects.all().delete()
+
+        # Create a new AssessmentSubject instance
+        assessment_subject = AssessmentSubject.objects.create(subject=subject)
+
+        # Create a new AssessmentSubject instance
+        assessment_topic = AssessmentTopic.objects.create(topic=topic)
+
+        # Create a new AssessmentSubject instance
+        assessment_format = AssessmentFormat.objects.create(format=assess_type)
+
+        # Print the created subject,topic,format for debugging
+        print("Subject:", assessment_subject.subject)
+        print("Topic:", assessment_topic.topic)
+        print("Format:", assessment_format.format)
+
         # Check if the response contains the "questions" key
-        questions_data = response_data.get("questions", [])
+        questions_data = response_data.get("questions", [])############### Let's add subject, topics, format
+                                                                                    ######### in AssessmentQuestion models
 
         # Create AssessmentQuestion objects for each question
         for question_data in questions_data:
@@ -230,18 +254,23 @@ def assessment(request):
             )
             assessment_question.save()
 
-        return JsonResponse({'message': message, 'response': response})
+        return JsonResponse({'message': message, 'response': response, 'subject': subject, 'topic': topic, 'format': assess_type})
+
     return render(request, 'assessment.html')
 
 
 def interface(request):
-    # Fetch the first 5 questions for display
     assessment_questions = AssessmentQuestion.objects.all()[:10]
+    assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
+    assessment_topic = AssessmentTopic.objects.first()
+    assessment_format = AssessmentFormat.objects.first()
 
     if request.method == 'POST':
         user = request.user
         score = 0
         user_answers = []
+        #topic = request.POST.get('topic')
+        #assess_type = request.POST.get('assess_type')
 
         # Calculate the total number of questions for the max score
         max_score = len(assessment_questions)
@@ -249,6 +278,10 @@ def interface(request):
         # Generate a unique assessment ID
         last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
         assessment_id = f"{user.username}-{last_assessment_number}"
+
+        subject = assessment_subject.subject if assessment_subject else None
+        topic = assessment_topic.topic if assessment_topic else None
+        format = assessment_format.format if assessment_topic else None
 
         for question in assessment_questions:
             selected_option_key = f'selected_options_{question.id}'
@@ -277,8 +310,15 @@ def interface(request):
             user=request.user,
             score=score,
             max_score=max_score,
-            result_details=result_details_json
+            result_details=result_details_json,
+            subject=subject,
+            topic=topic,
+            type=format
         )
+
+        print("Subject:", subject)
+        print("Topic:", topic)
+        print("Format:", format)
 
         return render(request, 'score.html', {
             'score': score,
@@ -286,8 +326,8 @@ def interface(request):
             'user_answers': user_answers,
         })
 
-    # Display the questions if the method is not POST
     return render(request, 'interface.html', {'assessment_questions': assessment_questions})
+
 
 def one_line_interface(request):
     # Fetch the first 5 one-line questions for display

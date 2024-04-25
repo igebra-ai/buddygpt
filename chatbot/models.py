@@ -10,7 +10,14 @@ class AssessmentQuestion(models.Model):
     def __str__(self):
         return self.question
     
-    
+class AssessmentSubject(models.Model):
+    subject = models.CharField(max_length=255)  
+
+class AssessmentTopic(models.Model):
+    topic = models.CharField(max_length=255)
+
+class AssessmentFormat(models.Model):
+    format = models.CharField(max_length=255)   
  
 
 class AssessmentHistory(models.Model):
@@ -21,6 +28,9 @@ class AssessmentHistory(models.Model):
     result_details = models.JSONField()
     # Add a datetime field to store the timestamp of the assessment
     date_taken = models.DateTimeField(auto_now_add=True, null=False)
+    subject = models.CharField(max_length=255)  # New field for subject
+    topic = models.CharField(max_length=255)    # New field for topic
+    type = models.CharField(max_length=255) 
     
 
     def __str__(self):

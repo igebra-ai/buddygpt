@@ -239,7 +239,10 @@ Past Assessments
       <thead>
         <tr>
           <th>Assessment ID</th>
+          <th>Subject</th>
+          <th>Topic</th>
           <th>Score</th>
+          <th>Format</th>
           <th>Date Taken</th>
           <th>Actions</th>
         </tr>
@@ -248,7 +251,10 @@ Past Assessments
         {% for history in assessment_history %}
         <tr>
           <td>{{ history.assessment_id }}</td>
+          <td>{{ history.subject }}</td>
+          <td>{{ history.topic }}</td>
           <td>{{ history.score }} / {{history.max_score}}</td>
+          <td>{{ history.type }}</td>
           <td>{{ history.date_taken|date:"Y-m-d " }}</td> 
           <td>
             <button class="view-results-btn" onclick="showResultDetails('resultDetails{{ forloop.counter }}')">View Result Details</button>

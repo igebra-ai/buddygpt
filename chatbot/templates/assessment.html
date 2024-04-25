@@ -304,12 +304,16 @@ AI-Assessments
     messageInput.value = '';
     topicsInput.value = '';
 
+
     fetch('', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': combinedMessage
+        'message': combinedMessage,
+        'subject': message,
+        'topic': topics,
+        'type': assess_type
       })
     })
       .then(response => response.json())

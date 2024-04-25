@@ -86,6 +86,11 @@ AI Generated Assessments
   <form method="post" id="assessmentForm">
     {% csrf_token %}
     {% for question in assessment_questions %}
+    <!-- Hidden input fields to store subject, topic, and type -->
+    <input type="hidden" name="subject" value="{{ subject }}">
+    <input type="hidden" name="topic" value="{{ topic }}">
+    <input type="hidden" name="assess_type" value="{{ assess_type }}">
+    
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Question {{forloop.counter}}</h5>
@@ -118,6 +123,8 @@ AI Generated Assessments
 
   
 </div>
+
+
 
 
 {% endblock %}
