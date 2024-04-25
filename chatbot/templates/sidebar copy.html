@@ -1,12 +1,13 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+{% block styles %}
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
-
+  
   <style>
     body {
       margin: 0;
@@ -98,8 +99,10 @@
       height: auto; /* This ensures the aspect ratio is maintained */
     }
   </style>
-</head>
-<body>
+{% endblock %}
+
+
+{% block content %}
   <div class="sidebar">
   <a href="{% url 'dashboard' %}">  
     <img src="https://assets.api.uizard.io/api/cdn/stream/d9c4b3d4-c2d6-4c2b-95e8-93adae4a96c3.png">
@@ -165,5 +168,4 @@
     <img src="{% static 'images/buddy.gif' %}" alt="Watermark">
   </div>
 
-</body>
-</html>
+  {% endblock %}
