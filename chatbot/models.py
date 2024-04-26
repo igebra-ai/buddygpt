@@ -74,14 +74,14 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     instance.profile.save()
 
 class Question(models.Model):
-    text = models.TextField()
+    text = models.CharField(max_length=500)
 
     def __str__(self):
         return self.text
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
-    text = models.TextField()
+    question = models.CharField( max_length=500)
+    text = models.CharField(max_length=500)
     redirect_url = models.URLField(blank=True, null=True)  # Redirect to more information
 
     def __str__(self):

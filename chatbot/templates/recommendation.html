@@ -86,7 +86,7 @@
     {% if lowest_scoring_subject %}
     <div class="alert alert-danger">
         <h2>Lowest Scoring Subject</h2>
-        <p>Subject: {{ lowest_scoring_subject.subjects__subject }}</p>
+        <p>Subject: {{ lowest_scoring_subject.subject }}</p>
         <p>Percentage Scored: {{ lowest_scoring_subject.percentage|floatformat:2 }}%</p>
     </div>
     {% else %}
