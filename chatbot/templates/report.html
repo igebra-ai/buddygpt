@@ -154,56 +154,49 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
     var ctx = document.getElementById('scoreChart').getContext('2d');
-    var scoreChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {{ subjects|safe }},
-            datasets: [
-                {
-                    label: 'Total Score',
-                    data: {{ total_scores|safe }},
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Obtained Score',
-                    data: {{ avg_scores|safe }},
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1,
-                    // Datalabels configuration
-                    datalabels: {
-                        align: 'end',
-                        anchor: 'end',
-                        formatter: function(value, context) {
-                            let totalScore = context.chart.data.datasets[0].data[context.dataIndex];
-                            let percentage = (value / totalScore * 100).toFixed(2);
-                            return percentage + '%';
-                        },
-                        color: '#444',
-                    }
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
+var scoreChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for score in subjects_scores %}"{{ score.subject }}", {% endfor %}],
+        datasets: [
+            {
+                label: 'Percentage',
+                data: [{% for score in subjects_scores %}{{ score.percentage }}, {% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                // Datalabels configuration
                 datalabels: {
-                    color: '#FFCE56',
-                    display: function(context) {
-                        return context.datasetIndex === 1; // only show datalabels for the average score
+                    align: 'end',
+                    anchor: 'end',
+                    formatter: function(value, context) {
+                        return value.toFixed(2) + '%';
+                    },
+                    color: '#444',
+                }
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value, index, values) {
+                        return value.toFixed(2) + '%';
                     }
                 }
             }
+        },
+        plugins: {
+            datalabels: {
+                color: '#FFCE56'
+            }
         }
-    });
+    }
+});
 
-    var ctx = document.getElementById('scoresChart').getContext('2d');
+var ctx = document.getElementById('scoresChart').getContext('2d');
     var scoresChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -252,8 +245,6 @@
             }
         }
     });
-
-
    
 </script>
 
