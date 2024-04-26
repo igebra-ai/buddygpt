@@ -355,7 +355,10 @@ def one_line_interface(request):
 def true_n_false_interface(request):
     # Fetch the True or False questions for display
     true_false_questions = AssessmentQuestion.objects.all()[:10]  # Assuming TrueFalseQuestion is your model for True or False questions
-
+    assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
+    assessment_topic = AssessmentTopic.objects.first()
+    assessment_format = AssessmentFormat.objects.first()
+    
     if request.method == 'POST':
         score = 0
         max_score = len(true_false_questions)
@@ -367,6 +370,10 @@ def true_n_false_interface(request):
         # Generate a unique assessment ID
         last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
         assessment_id = f"assessment-{last_assessment_number}"
+        
+        subject = assessment_subject.subject if assessment_subject else None
+        topic = assessment_topic.topic if assessment_topic else None
+        format = assessment_format.format if assessment_topic else None
 
         for question in true_false_questions:
             answer_key = f'answer_{question.id}'
@@ -408,8 +415,15 @@ def true_n_false_interface(request):
             user=request.user,
             score=score,
             max_score=max_score,
-            result_details=result_details_json
+            result_details=result_details_json,
+            subject=subject,
+            topic=topic,
+            type=format
         )
+        
+        print("Subject:", subject)
+        print("Topic:", topic)
+        print("Format:", format)
 
         # Render the score template with the score
         return render(request, 'score.html', {'score': score, 'max_score': max_score, 'incorrect_answers': incorrect_answers})
