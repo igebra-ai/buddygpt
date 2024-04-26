@@ -27,18 +27,23 @@
     }
 
     .box-container {
-        display: flex;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        gap: 20px 20px; /* Gap between rows and columns */
         padding: 20px;
     }
 
     .box {
         width: 100%;
-        max-width: 800px;
         background-color: #f0f0f0;
         border-radius: 8px;
         padding: 20px;
-        margin-bottom: 20px; /* Spacing between boxes */
+    }
+
+    .box-heading {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: rgb(127, 127, 127);
     }
 
     .chart-container {
@@ -48,7 +53,7 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px; /* Spacing above the table */
+        margin-top: 20px;
     }
 
     th, td {
@@ -88,64 +93,57 @@
                     <canvas id="scoreChart"></canvas>
                 </div> 
             </div>
-        </div>
-        <div class="box-container">
             <div class="box">
                 <div class="box-heading">Score by Format</div>
                 <div class="chart-container">
                     <canvas id="scoresChart"></canvas>
                 </div> 
             </div>
-        </div>
-        <div class="content-container">
-            <h2 class="dashboard-heading">Score Comparisons</h2>
-            <div class="box-container">
-                <div class="box">
-                    <h3>Subject</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Subject</th>
-                                <th>Total Score</th>
-                                <th>Obtained Score</th>
-                                <th>Percentage (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for score in subjects_scores %}
-                            <tr>
-                                <td>{{ score.subject }}</td>
-                                <td>{{ score.total_score }}</td>
-                                <td>{{ score.average_score }}</td>
-                                <td>{{ score.percentage|floatformat:2 }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="box">
-                    <h3>Assessment Type</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Type</th>
-                                <th>Total Score</th>
-                                <th>Obtained Score</th>
-                                <th>Percentage (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for score in types_scores %}
-                            <tr>
-                                <td>{{ score.type }}</td>
-                                <td>{{ score.total_score }}</td>
-                                <td>{{ score.average_score }}</td>
-                                <td>{{ score.percentage|floatformat:2 }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+            <div class="box">
+                <div class="box-heading">Subject-wise Score Comparison</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Total Score</th>
+                            <th>Obtained Score</th>
+                            <th>Percentage (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for score in subjects_scores %}
+                        <tr>
+                            <td>{{ score.subject }}</td>
+                            <td>{{ score.total_score }}</td>
+                            <td>{{ score.average_score }}</td>
+                            <td>{{ score.percentage|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-heading">Assessment Type-wise Score Comparison</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Total Score</th>
+                            <th>Obtained Score</th>
+                            <th>Percentage (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for score in types_scores %}
+                        <tr>
+                            <td>{{ score.type }}</td>
+                            <td>{{ score.total_score }}</td>
+                            <td>{{ score.average_score }}</td>
+                            <td>{{ score.percentage|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
