@@ -8,6 +8,7 @@ from .models import AssessmentQuestion, AssessmentHistory, Document, AssessmentS
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
+from django.db.models import Avg,Sum,Max
 from dotenv import load_dotenv
 import json
 from django.db.models import Avg
@@ -698,3 +699,47 @@ def view_profile(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def report(request):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    # Calculating both average and total scores for each subject or type
+    subjects_scores = AssessmentHistory.objects.filter(user=request.user) \
+                                               .values('subject') \
+                                               .annotate(average_score=Avg('score'),
+                                                         total_score=Sum('max_score')) \
+                                               .order_by('subject')
+
+    subjects = [score['subject'] for score in subjects_scores]
+    avg_scores = [score['average_score'] for score in subjects_scores]
+    total_scores = [score['total_score'] for score in subjects_scores]
+    
+    # Add percentage calculation
+    for score in subjects_scores:
+        score['percentage'] = (score['average_score'] / score['total_score'] * 100) if score['total_score'] > 0 else 0
+    
+    type_scores = AssessmentHistory.objects.filter(user=request.user) \
+                                           .values('type') \
+                                           .annotate(average_score=Avg('score'),
+                                                     total_score=Sum('max_score')) \
+                                           .order_by('type')
+                                           
+    types = [score['type'] for score in type_scores]
+    avg_scoress = [score['average_score'] for score in type_scores]
+    total_scoress= [score['total_score'] for score in type_scores]
+    
+    # Add percentage calculation
+    for score in type_scores:
+        score['percentage'] = (score['average_score'] / score['total_score'] * 100) if score['total_score'] > 0 else 0
+
+    return render(request, 'report.html', {
+        'subjects': subjects,
+        'avg_scores': avg_scores,
+        'total_scores': total_scores,
+        'types': types,
+        'avg_scoress': avg_scoress,
+        'total_scoress': total_scoress,
+        'subjects_scores': subjects_scores,
+        'types_scores': type_scores,
+    })
