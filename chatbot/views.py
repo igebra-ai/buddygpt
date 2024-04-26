@@ -264,7 +264,7 @@ def interface(request):
     assessment_questions = AssessmentQuestion.objects.all()[:10]
     assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
     assessment_topic = AssessmentTopic.objects.first()
-    assessment_format = AssessmentFormat.objects.first()
+    assessment_format = AssessmentFormat.objects.last()
 
     if request.method == 'POST':
         user = request.user
@@ -357,7 +357,7 @@ def true_n_false_interface(request):
     true_false_questions = AssessmentQuestion.objects.all()[:10]  # Assuming TrueFalseQuestion is your model for True or False questions
     assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
     assessment_topic = AssessmentTopic.objects.first()
-    assessment_format = AssessmentFormat.objects.first()
+    assessment_format = AssessmentFormat.objects.last()
     
     if request.method == 'POST':
         score = 0
