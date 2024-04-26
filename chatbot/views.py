@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .models import AssessmentQuestion, AssessmentHistory, Document, AssessmentSubject, AssessmentTopic, AssessmentFormat
+from .models import AssessmentQuestion, AssessmentHistory, Document, AssessmentSubject, AssessmentTopic, AssessmentFormat,Question,Answer
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
@@ -757,3 +757,52 @@ def report(request):
         'subjects_scores': subjects_scores,
         'types_scores': type_scores,
     })
+
+def recommend(request, question_id=None):
+    if not question_id:
+        # Start with the first question
+        question = Question.objects.first()
+    else:
+        question = Question.objects.get(id=question_id)
+
+    if request.method == 'POST':
+        answer_id = request.POST.get('answer')
+        answer = Answer.objects.get(id=answer_id)
+        if answer.redirect_url:
+            return redirect(answer.redirect_url)
+        # Proceed to the next question, if there is one related to this answer
+        next_question = answer.next_question if hasattr(answer, 'next_question') else None
+        if next_question:
+            return redirect('question', question_id=next_question.id)
+        else:
+            return render(request, 'end.html', {'answer': answer})
+        
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    # Calculate the average and total scores, and then the percentage
+    subjects_scores = AssessmentHistory.objects.filter(user=request.user) \
+                                               .values('subject') \
+                                               .annotate(total_score=Sum('max_score'),
+                                                         total_sum=Sum('score'))
+
+    # Calculate percentage and add it to each item
+    for item in subjects_scores:
+        if item['total_score'] > 0:
+            item['percentage'] = (item['total_sum'] / item['total_score']) * 100
+        else:
+            item['percentage'] = 0
+
+    # Find the lowest scoring subject
+    if subjects_scores:
+        lowest_scoring_subject = min(subjects_scores, key=lambda x: x['percentage'])
+    else:
+        lowest_scoring_subject = None
+
+    # Sort subjects by percentage in descending order for additional display
+    sorted_subjects = sorted(subjects_scores, key=lambda x: x['percentage'], reverse=True)
+
+    
+
+    return render(request, 'recommendation.html', {'question': question,'sorted_subjects': sorted_subjects,
+        'lowest_scoring_subject': lowest_scoring_subject})

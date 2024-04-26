@@ -72,3 +72,17 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()
+
+class Question(models.Model):
+    text = models.TextField()
+
+    def __str__(self):
+        return self.text
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
+    text = models.TextField()
+    redirect_url = models.URLField(blank=True, null=True)  # Redirect to more information
+
+    def __str__(self):
+        return self.text
