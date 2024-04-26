@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('report/', views.report, name='report'),
     path('recommend/', views.recommend, name='recommend'),
+    path('end/', views.end, name='end'),
     
     #path('signin', views.signin, name='signin'),
     path('register', views.register, name='register'),

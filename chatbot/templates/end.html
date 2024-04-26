@@ -1,7 +1,35 @@
 {% extends 'base.html' %}
 
+{% block styles %}
+<style>
+  /* Existing styles */
+
+.main-container {
+  display: flex;
+}
+
+.chat-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  padding-top: 55px;
+  padding-left: 250px;
+  padding-bottom: 55px;
+}
+
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Thank you for completing the Q&A!</h1>
-<p>You might find this information helpful:</p>
-<p><a href="{{ answer.redirect_url }}">Learn More</a></p>
+<div class="main-container">
+    {% include 'sidebar.html' %}
+
+    <div class="chat-container">
+        <h1>Thank you for completing the Q&A!</h1>
+        <p>You might find this information helpful:</p>
+        <p><a href="#">Learn More</a></p>
+    </div>
+</div>
 {% endblock %}

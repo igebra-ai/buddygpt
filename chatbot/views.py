@@ -806,3 +806,7 @@ def recommend(request, question_id=None):
 
     return render(request, 'recommendation.html', {'question': question,'sorted_subjects': sorted_subjects,
         'lowest_scoring_subject': lowest_scoring_subject})
+
+
+def end(request):
+    return render(request, 'end.html')

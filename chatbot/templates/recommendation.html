@@ -67,12 +67,16 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>{{ question.text }}</p>
-          <form method="post">
-            {% csrf_token %}
+          <p>how can I help you?</p>
+          <form >
+            <!--{% csrf_token %}
             {% for answer in question.answers.all %}
               <button type="submit" class="btn btn-info btn-block" name="answer" value="{{ answer.id }}">{{ answer.text }}</button>
-            {% endfor %}
+            {% endfor %} -->
+            {% csrf_token %}
+            <button type="submit" class="btn btn-info "><a href="{% url 'assessment' %}">Take a Test</a></button>
+            <button type="submit" class="btn btn-info "><a href="{% url 'report' %}">Want to see your progress</a></button>
+            <button type="submit" class="btn btn-info "><a href="{% url 'end' %}">Exit</a></button>
           </form>
           <hr>
           <p>Last Answer: {{ last_answer }}</p>
