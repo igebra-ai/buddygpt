@@ -721,7 +721,7 @@ def report(request):
     # Calculating both average and total scores for each subject or type
     subjects_scores = AssessmentHistory.objects.filter(user=request.user) \
                                                .values('subject') \
-                                               .annotate(average_score=Avg('score'),
+                                               .annotate(average_score=Sum('score'),
                                                          total_score=Sum('max_score')) \
                                                .order_by('subject')
 
@@ -735,7 +735,7 @@ def report(request):
     
     type_scores = AssessmentHistory.objects.filter(user=request.user) \
                                            .values('type') \
-                                           .annotate(average_score=Avg('score'),
+                                           .annotate(average_score=Sum('score'),
                                                      total_score=Sum('max_score')) \
                                            .order_by('type')
                                            
