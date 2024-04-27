@@ -150,7 +150,7 @@
                       <img src="{% static 'images/default-user-icon.png' %}" alt="Default profile picture" style="width:50px; height: 40px;">
                   </a>
               {% endif %}
-              <span style="margin-left: 10px;">{{ user.username }}</span>
+              <span style="margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
           {% else %}
               <span style="margin-left: 10px;">Guest</span>
           {% endif %}
