@@ -147,7 +147,7 @@
               {% else %}
                   <!-- Default profile icon as a clickable link -->
                   <a href="{% url 'view-profile' %}">
-                      <img src="{% static 'images/default-user-icon.png' %}" alt="Default profile picture" style="width:50px; height: 40px;">
+                      <img src="{% static 'images/user-icon.png' %}" alt="Default profile picture" style="width:50px; height: 40px;">
                   </a>
               {% endif %}
               <span style="margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
