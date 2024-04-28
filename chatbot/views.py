@@ -435,25 +435,31 @@ def assessment_history(request):
     if not request.user.is_authenticated:
         # Redirect the user to the login page, or return a suitable response
         return redirect('signin')
+    
     # Fetch all assessment history records for the current user in reverse order from the AssessmentHistory database
     user_assessment_history = AssessmentHistory.objects.filter(user=request.user).order_by('-assessment_id')
     total_assessments = user_assessment_history.count()
-    average_score = user_assessment_history.aggregate(Avg('score'))['score__avg'] or 0
+    
+    # Calculate total obtained score and total maximum possible score
+    total_obtained_score = user_assessment_history.aggregate(Sum('score'))['score__sum'] or 0
+    total_max_score = user_assessment_history.aggregate(Sum('max_score'))['max_score__sum'] or 0
+    
+    # Calculate overall score percentage
+    overall_score_percentage = (total_obtained_score / total_max_score) * 100 if total_max_score > 0 else 0
 
     # Example data for graph (modify as needed)
     scores = list(user_assessment_history.values_list('score', flat=True))
 
     for history in user_assessment_history:
-            # Parse the JSON string into a Python object
+        # Parse the JSON string into a Python object
         history.result_details = json.loads(history.result_details)
 
     # Pass these to the context
     context = {
         'assessment_history': user_assessment_history,
         'total_assessments': total_assessments,
-        'average_score': average_score,
+        'overall_score_percentage': overall_score_percentage,
         'scores': scores,
-
     }
     return render(request, 'Assessment_History.html', context)
 

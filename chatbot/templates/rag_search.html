@@ -96,12 +96,12 @@ Learn from Documents
 
     <!-- Main Content -->
     <div class="content">
-        <h2 style="margin-left: 60px;">Learn from Documents</h2> 
+        <h1 style="margin-left: 60px; padding-top: 20px;">Learn from Documents</h1> <br>
         
         <!-- Display uploaded documents horizontally -->
               
         <div class="documents-container">
-            <h2>Uploaded Documents</h2>
+            <h3>Uploaded Documents</h3>
             {% for document in documents %}
                 <div class="document" onclick="toggleSelection(this, '{{ document.id }}')" ondblclick="displayDocumentContent('{{ document.id }}')">
                     <span class="document-name">{{ document.name }}</span>
