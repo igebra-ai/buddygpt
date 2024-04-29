@@ -360,6 +360,7 @@ def true_n_false_interface(request):
     assessment_format = AssessmentFormat.objects.last()
     
     if request.method == 'POST':
+        user = request.user
         score = 0
         max_score = len(true_false_questions)
         incorrect_answers = {}
@@ -369,7 +370,7 @@ def true_n_false_interface(request):
 
         # Generate a unique assessment ID
         last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
-        assessment_id = f"assessment-{last_assessment_number}"
+        assessment_id = f"{user.username}-{last_assessment_number}"
         
         subject = assessment_subject.subject if assessment_subject else None
         topic = assessment_topic.topic if assessment_topic else None
