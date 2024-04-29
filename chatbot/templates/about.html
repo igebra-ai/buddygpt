@@ -444,10 +444,9 @@ a:not([href]):not([tabindex]) {
 
 {% block content %}
 <nav class="navbar">
-  <a class="nav-link" href="{% url 'chatbot' %}"> <img src="{% static 'images/buddy-gpt.png' %}"></a>
   <div class="signup-login">
     <a class="nav-link" href="register.html">Signup</a>
-    <a class="nav-link" href="signin.html">Login</a>
+    <a class="nav-link" href="signin">Login</a>
   </div>
 </nav>
 <div class="main-container">

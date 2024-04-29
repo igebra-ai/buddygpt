@@ -223,14 +223,17 @@ Chat with Buddy
     <br><br>
   </div>
   <form class="message-form">
-    {%csrf_token%}
+    {% csrf_token %}
     <div class="input-group">
-      <input type="text" class="form-control message-input" placeholder="Type your message...">
+      <input type="text" class="form-control message-input" id="messageInput" placeholder="Type your message...">
+
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">Send</button>
+        <button type="button" class="btn btn-primary btn-mic">MIC</button>
+        <button type="submit" class="btn btn-primary btn-send" style="display: none;">Send</button>
       </div>
     </div>
   </form>
+  
 </div>
 </div>
 {% include 'sidebar copy.html' %}
@@ -238,32 +241,72 @@ Chat with Buddy
 <script>
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
-  const messageInput = document.querySelector('.message-input');
+  const messageInput = document.getElementById('messageInput'); // Changed to use ID
+  const micButton = document.querySelector('.btn-mic');
+  const sendButton = document.querySelector('.btn-send');
+  const recognition = new webkitSpeechRecognition(); // Speech recognition object
 
+  // Function to show mic button and hide send button
+  function showMicButton() {
+    micButton.style.display = 'inline-block';
+    sendButton.style.display = 'none';
+  }
+
+  // Function to show send button and hide mic button
+  function showSendButton() {
+    micButton.style.display = 'none';
+    sendButton.style.display = 'inline-block';
+  }
+
+  // Event listener for when the input field is clicked
+  messageInput.addEventListener('focus', () => {
+    showSendButton(); // Show send button when input field is clicked
+  });
+
+  // Event listener for when the input field loses focus
+  messageInput.addEventListener('blur', () => {
+    if (messageInput.value.trim() === '') {
+      showMicButton(); // Show mic button if input field is empty
+    }
+  });
+
+  // Event listener for mic button click
+  micButton.addEventListener('click', () => {
+    recognition.start(); // Start speech recognition when mic button is clicked
+  });
+
+  // Event listener for speech recognition result
+  recognition.onresult = (event) => {
+    const result = event.results[0][0].transcript; // Get the recognized text
+    messageInput.value += ' ' + result; // Append the recognized text to the input field
+  };
+
+  // Event listener for form submission
   messageForm.addEventListener('submit', (event) => {
     event.preventDefault();
-
     const message = messageInput.value.trim();
-  
     if (message.length === 0) {
       return;
     }
 
-    const messageItem = document.createElement('li');
-    messageItem.classList.add('message', 'sent');
-    messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
-                <b>You</b>
-            </div>
-            <div class="message-content">
-                ${message}
-            </div>
-        </div>`;
-    messagesList.appendChild(messageItem);
+    // Add the sent message to the messages list
+    const sentMessageItem = document.createElement('li');
+    sentMessageItem.classList.add('message', 'sent');
+    sentMessageItem.innerHTML = `
+      <div class="message-text">
+        <div class="message-sender">
+          <b>You</b>
+        </div>
+        <div class="message-content">
+          ${message}
+        </div>
+      </div>`;
+    messagesList.appendChild(sentMessageItem);
 
+    // Clear the input field
     messageInput.value = '';
 
+    // Send the message to the server via fetch
     fetch('', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -272,24 +315,28 @@ Chat with Buddy
         'message': message
       })
     })
-      .then(response => response.json())
-      .then(data => {
-        const response = data.response;
-        const messageItem = document.createElement('li');
-        messageItem.classList.add('message', 'received');
-        messageItem.innerHTML = `
+    .then(response => response.json())
+    .then(data => {
+      const response = data.response;
+      // Add the received message to the messages list
+      const receivedMessageItem = document.createElement('li');
+      receivedMessageItem.classList.add('message', 'received');
+      receivedMessageItem.innerHTML = `
         <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
-            </div>
-            <div class="message-content">
-                ${response}
-            </div>
-        </div>
-          `;
-        messagesList.appendChild(messageItem);
-      });
+          <div class="message-sender">
+            <b>AI Chatbot</b>
+          </div>
+          <div class="message-content">
+            ${response}
+          </div>
+        </div>`;
+      messagesList.appendChild(receivedMessageItem);
+    });
   });
 
+  // Initially, show mic button
+  showMicButton();
 </script>
+
+
 {% endblock %}
