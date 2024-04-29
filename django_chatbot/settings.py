@@ -50,6 +50,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+X_FRAME_OPTIONS = 'ALLOWALL'
+
+
 ROOT_URLCONF = 'django_chatbot.urls'
 
 TEMPLATES = [
