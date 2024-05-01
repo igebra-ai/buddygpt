@@ -447,7 +447,9 @@ def assessment_history(request):
     
     # Calculate overall score percentage
     overall_score_percentage = (total_obtained_score / total_max_score) * 100 if total_max_score > 0 else 0
-
+    
+    average_score = user_assessment_history.aggregate(Avg('score'))['score__avg'] or 0
+    
     # Example data for graph (modify as needed)
     scores = list(user_assessment_history.values_list('score', flat=True))
 
@@ -460,6 +462,7 @@ def assessment_history(request):
         'assessment_history': user_assessment_history,
         'total_assessments': total_assessments,
         'overall_score_percentage': overall_score_percentage,
+        'average_score': average_score,
         'scores': scores,
     }
     return render(request, 'Assessment_History.html', context)
