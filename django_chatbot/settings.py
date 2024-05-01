@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'django_chatbot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
-        'NAME': 'u913411133_buddy',  # Database name
-        'USER': 'u913411133_badmin',  # Database user
-        'PASSWORD': 'aJ9#eb66O',  # Database password
+        'NAME': 'u913411133_bgpt1',  # Database name
+        'USER': 'u913411133_badmin3',  # Database user
+        'PASSWORD': '9z!|]>cQa3T$',  # Database password
         'HOST': '89.117.157.241',  # Database host
         'PORT': '3306',  # Database port
     }
@@ -147,6 +147,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # SMTP configuration
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'devashribhosale1002.com'
-EMAIL_HOST_PASSWORD = 'ocrm xgqd venk iwms'
+EMAIL_HOST_USER = 'devashribhosale1002@gmail.com'
+EMAIL_HOST_PASSWORD = 'efid ruaa tfnp jyqs'
 EMAIL_USE_TLS = True
