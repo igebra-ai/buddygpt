@@ -14,7 +14,9 @@ urlpatterns = [
     path('profile/', views.view_profile, name='view-profile'),
 
     path('report/', views.report, name='report'),
+    path('report copy/', views.dash_report, name='report copy'),
     path('recommend/', views.recommend, name='recommend'),
+    path('recommendation copy/', views.dashboard_recommend, name='recommendation copy'),
     path('end/', views.end, name='end'),
     
     #path('signin', views.signin, name='signin'),

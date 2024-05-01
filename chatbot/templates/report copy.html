@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}
+<style>
+    body, html {
+        height: 100%;
+        font-family: "DM Sans";
+    }
+
+    .main-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        height: 100%;
+    }
+
+    
+
+    .sidebar {
+        width: 250px;
+        flex-shrink: 0;
+    }
+
+    .content-container {
+        flex-grow: 1;
+        padding: 20px;
+        margin-left: 0px;
+    }
+
+    .box-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two columns */
+        gap: 20px 20px; /* Gap between rows and columns */
+        padding: 20px;
+    }
+
+    .box {
+        width: 100%;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .box-heading {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: rgb(127, 127, 127);
+    }
+
+    .chart-container {
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+        color: #f44067;
+    }
+
+    th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: rgb(216, 27, 93);
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #e8f8ff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="content-container">
+        <h1 class="dashboard-heading"> Report</h1>
+        <div class="box-container">
+            <div class="box">
+                <div class="box-heading">Score by Subject</div>
+                <div class="chart-container">
+                    <canvas id="scoreChart"></canvas>
+                </div> 
+            </div>
+            <div class="box">
+                <div class="box-heading">Score by Format</div>
+                <div class="chart-container">
+                    <canvas id="scoresChart"></canvas>
+                </div> 
+            </div>
+            <div class="box">
+                <div class="box-heading">Subject-wise Score Comparison</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Total Score</th>
+                            <th>Obtained Score</th>
+                            <th>Percentage (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for score in subjects_scores %}
+                        <tr>
+                            <td>{{ score.subject }}</td>
+                            <td>{{ score.total_score }}</td>
+                            <td>{{ score.average_score }}</td>
+                            <td>{{ score.percentage|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-heading">Assessment Type-wise Score Comparison</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Total Score</th>
+                            <th>Obtained Score</th>
+                            <th>Percentage (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for score in types_scores %}
+                        <tr>
+                            <td>{{ score.type }}</td>
+                            <td>{{ score.total_score }}</td>
+                            <td>{{ score.average_score }}</td>
+                            <td>{{ score.percentage|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+    var ctx = document.getElementById('scoreChart').getContext('2d');
+var scoreChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for score in subjects_scores %}"{{ score.subject }}", {% endfor %}],
+        datasets: [
+            {
+                label: 'Percentage',
+                data: [{% for score in subjects_scores %}{{ score.percentage }}, {% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                // Datalabels configuration
+                datalabels: {
+                    align: 'end',
+                    anchor: 'end',
+                    formatter: function(value, context) {
+                        return value.toFixed(2) + '%';
+                    },
+                    color: '#444',
+                }
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value, index, values) {
+                        return value.toFixed(2) + '%';
+                    }
+                }
+            }
+        },
+        plugins: {
+            datalabels: {
+                color: '#FFCE56'
+            }
+        }
+    }
+});
+
+var ctx = document.getElementById('scoresChart').getContext('2d');
+    var scoresChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ types|safe }},
+            datasets: [
+                {
+                    label: 'Total Score',
+                    data: {{ total_scoress|safe }},
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Obtained Score',
+                    data: {{ avg_scoress|safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    // Datalabels configuration
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'end',
+                        formatter: function(value, context) {
+                            let totalScore = context.chart.data.datasets[0].data[context.dataIndex];
+                            let percentage = (value / totalScore * 100).toFixed(2);
+                            return percentage + '%';
+                        },
+                        color: '#444',
+                    }
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                datalabels: {
+                    color: '#FFCE56',
+                    display: function(context) {
+                        return context.datasetIndex === 1; // only show datalabels for the average score
+                    }
+                }
+            }
+        }
+    });
+   
+</script>
+
+
+{% endblock %}

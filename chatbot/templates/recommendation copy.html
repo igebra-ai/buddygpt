@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block styles %}
+{{ block.super }}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* Additional styles for sidebar */
+    
+
+    /* Push content to the right to make space for sidebar */
+    .main-container {
+        margin-left: 20px;
+        padding: 16px;
+
+    }
+
+    /* Added to ensure the internal container doesn't touch the edges of the main container */
+    .container {
+        margin-left: 40px;
+        padding: 16px; /* To avoid horizontal scroll caused by exceeding viewport width */
+    }
+
+    .btn-primary {
+        background-color: rgb(216, 27, 93); /* New button color */
+        border-color: rgb(216, 27, 93); /* Ensure the border matches the button color */
+    }
+
+    /* Optional: Change hover and focus colors for better UI */
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: rgba(216, 27, 93, 0.8); /* Slightly lighter on hover/focus */
+        border-color: rgba(216, 27, 93, 0.8);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-container">
+  <!-- Button to open the modal -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#questionModal">
+    Start Interaction
+  </button>
+
+  <!-- Modal for questions -->
+  <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="questionModalLabel">Question</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>how can I help you?</p>
+          <form >
+            <!--{% csrf_token %}
+            {% for answer in question.answers.all %}
+              <button type="submit" class="btn btn-info btn-block" name="answer" value="{{ answer.id }}">{{ answer.text }}</button>
+            {% endfor %} -->
+            {% csrf_token %}
+            <button type="submit" class="btn btn-info "><a href="{% url 'assessment' %}">Take a Test</a></button>
+            <button type="submit" class="btn btn-info "><a href="{% url 'report' %}">Want to see your progress</a></button>
+            <button type="submit" class="btn btn-info "><a href="{% url 'end' %}">Exit</a></button>
+          </form>
+          <hr>
+          <p>Last Answer: {{ last_answer }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+    
+    {% if lowest_scoring_subject %}
+    <div class="alert alert-danger">
+        <h2>Lowest Scoring Subject</h2>
+        <p>Subject: {{ lowest_scoring_subject.subject }}</p>
+        <p>Percentage Scored: {{ lowest_scoring_subject.percentage|floatformat:2 }}%</p>
+    </div>
+    {% else %}
+    <p>No scoring data available.</p>
+    {% endif %}
+   
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock %}
