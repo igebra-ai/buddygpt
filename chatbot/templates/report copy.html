@@ -29,10 +29,11 @@
     }
 
     .box-container {
+        padding-top: 5px;
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* Two columns */
         gap: 20px 20px; /* Gap between rows and columns */
-        padding: 20px;
+        padding: 5px;
     }
 
     .box {
@@ -86,7 +87,7 @@
 {% block content %}
 <div class="main-container">
     <div class="content-container">
-        <h1 class="dashboard-heading"> Report</h1>
+        
         <div class="box-container">
             <div class="box">
                 <div class="box-heading">Score by Subject</div>
@@ -100,52 +101,8 @@
                     <canvas id="scoresChart"></canvas>
                 </div> 
             </div>
-            <div class="box">
-                <div class="box-heading">Subject-wise Score Comparison</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Total Score</th>
-                            <th>Obtained Score</th>
-                            <th>Percentage (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for score in subjects_scores %}
-                        <tr>
-                            <td>{{ score.subject }}</td>
-                            <td>{{ score.total_score }}</td>
-                            <td>{{ score.average_score }}</td>
-                            <td>{{ score.percentage|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="box">
-                <div class="box-heading">Assessment Type-wise Score Comparison</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Total Score</th>
-                            <th>Obtained Score</th>
-                            <th>Percentage (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for score in types_scores %}
-                        <tr>
-                            <td>{{ score.type }}</td>
-                            <td>{{ score.total_score }}</td>
-                            <td>{{ score.average_score }}</td>
-                            <td>{{ score.percentage|floatformat:2 }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            
+            
         </div>
     </div>
 </div>
