@@ -97,6 +97,28 @@
       max-width: 100px; /* Adjust the maximum width as needed */
       height: auto; /* This ensures the aspect ratio is maintained */
     }
+
+    .footer img {
+      width: 40px;  /* Control the size to match your design */
+      height: 40px;  /* Equal to the width to maintain a perfect circle */
+      border-radius: 50%;  /* This makes the image round */
+      object-fit: cover;  /* Ensures the image covers the circle, may crop it */
+      border: 0px solid #fff;  /* Optional: adds a white border around the image */
+      display: block;
+      margin: auto;  /* Centers the image horizontally in its container */
+    }
+
+    .footer .image-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 60px;  /* Adjust based on your design needs */
+      width: 80%;  /* Adjust based on your design needs */
+    }
+  
+    
+  
+  
   </style>
 </head>
 <body>
@@ -137,26 +159,24 @@
         <a href="{% url 'recommend' %}">Recommendations</a></div>
     </div>
     <div class="footer">
-      <div>
+      <div class="image-container">
           {% if user.is_authenticated %}
               {% if user.profile.profile_picture %}
-                  <!-- Profile picture as a clickable link -->
                   <a href="{% url 'view-profile' %}">
-                      <img src="{{ user.profile.profile_picture.url }}" alt="Profile picture of {{ user.username }}" style="width:50px; height: 40px;">
+                      <img src="{{ user.profile.profile_picture.url }}" alt="Profile picture of {{ user.username }}">
                   </a>
               {% else %}
-                  <!-- Default profile icon as a clickable link -->
                   <a href="{% url 'view-profile' %}">
-                      <img src="{% static 'images/user-icon.png' %}" alt="Default profile picture" style="width:50px; height: 40px;">
+                      <img src="{% static 'images/user-icon.png' %}" alt="Default profile picture">
                   </a>
               {% endif %}
-              <span style="margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
+               <span style="margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
           {% else %}
               <span style="margin-left: 10px;">Guest</span>
           {% endif %}
       </div>
   </div>
- 
+  
     
   </div>
 
