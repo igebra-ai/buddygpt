@@ -2,9 +2,28 @@
 {% load static %}
 {% block styles %}
 <head>
+  <title>About</title>
   <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
+    @media only screen and (min-width: 768px) {
+  /* For desktop: */
+  .col-1 {width: 8.33%;}
+  .col-2 {width: 16.66%;}
+  .col-3 {width: 25%;}
+  .col-4 {width: 33.33%;}
+  .col-5 {width: 41.66%;}
+  .col-6 {width: 50%;}
+  .col-7 {width: 58.33%;}
+  .col-8 {width: 66.66%;}
+  .col-9 {width: 75%;}
+  .col-10 {width: 83.33%;}
+  .col-11 {width: 91.66%;}
+  .col-12 {width: 100%;}
+}
+
     body, html {
       height: 100%;
     }
@@ -18,6 +37,7 @@
       border-radius: 8px;
       box-shadow: #e3efff 1px 4px 8px;
       border: 0px;
+      margin-top: 50px;
     }
 
     .left-section {
@@ -47,9 +67,11 @@
 
     .navbar {
       display: flex;
+      position: fixed;
       background-color:  rgb(255, 255, 255);
       width: 100%;
       padding-left: 10%; /* Adjusted padding */
+      z-index: 1000; /* Set z-index to keep the navbar on top */
     }
 
     .navbar-nav {
@@ -159,7 +181,7 @@
     .try-now-button {
   /* Button styles */
   position: absolute; /* Position the button relative to its parent */
-  bottom: 192px; /* Adjust the distance from the bottom */
+  bottom: 165px; /* Adjust the distance from the bottom */
   margin-left: 50px;
   padding: 10px 20px; /* Add padding to the button */
   background-color:  #f44067; /* Light purple background color */
@@ -438,15 +460,208 @@ a:not([href]):not([tabindex]) {
 }
 
 
+
+/*footer*/
+.footer {
+  
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   
+   
+   color: white;
+   text-align: center;
+   height: 20%;
+   background: #ffffff;
+   font-family: "DM Sans";
+   font-weight: bold;
+   font-size:20px;
+   color: #1b1b1b00;
+}
+
+.fimg1{
+  height: auto;
+    max-width: 100%;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin-left:-52%;
+}
+
+.fimg2{
+  height: auto;
+    max-width: 100%;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin-left: 5%;
+    /* margin-bottom: 69px; */
+    margin-top: -184px;
+}
+
+.fimg3{
+  height: auto;
+    max-width: 100%;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    margin-left:50%;
+    margin-top: -182px;
+}
+
+.pfooter{
+  color: #5C5B5B;
+  font-family:"DM Sans";
+  font-size: 18px;
+  margin-top:-85px;
+}
+
+
+
+.inner-section-card{
+  background-color: #f8f8f8; /* Light white color */
+      box-shadow: 0 4px 8px rgba(78, 115, 223, 0.1); /* Light purplish blue box shadow */
+      border-radius: 6px;
+      padding: 20px;
+      height: 56%;
+    width: 50%;
+    margin-left: 3%;
+    margin-top: 153px;
+
+}
+
+
+/*here the section css starts*/
+ul {
+  margin: 0px;
+  padding: 0px;
+}
+a:focus, a:hover, .portfolio-cat a:hover, .footer -menu li a:hover {
+  color: #2B96CC;
+  text-decoration: none;
+}
+.section-title h2 {
+position: relative;
+margin-bottom: 45px;
+display: inline-block;
+font-weight: 600;
+line-height: 1;
+font-family: "DM Sans";
+font-weight: bold;
+}
+.section-title h2::before {
+  content: "";
+  position: absolute;
+  left: 19%;
+  width: 245px;
+  height: 2px;
+  background: #ff5e14;
+  bottom: -25px;
+  margin-left: -30px;
+}
+.section-title.service-title p {
+margin-bottom: 10px;
+}
+.blog-area {
+  background: #F8F9FA;
+  min-height: 100vh;
+  width: 94%;
+  margin-left: 53px;
+  opacity: 1;
+      background:  #e5ecf5;;
+      border-radius: 8px;
+      box-shadow: #e3efff 1px 4px 8px;
+}
+.blog-wrapper {
+background: #fff;
+overflow: hidden;
+padding: 20px;
+}
+.home-blog-wrapper{
+transition: .3s;
+}
+.blog-wrapper.home-blog-wrapper:hover {
+box-shadow: 10px 20px 30px rgba(0,0,0,.12);
+}
+.blog-thumb {
+margin-bottom: 20px;
+}
+.blog-title {
+display: inline-block;
+font-size: 30px;
+font-weight: 600;
+line-height: 1.4;
+margin: 10px 0 15px;
+padding: 0;
+text-align: left;
+}
+.blog-content.home-blog h2 {
+font-size: 18px;
+margin-bottom: 10px;
+}
+.blog-content.home-blog p {
+margin-bottom: 10px;
+}
+.link-box.home-blog-link a {
+font-size: 14px;
+color: #ff5e14;
+}
+.blog-title a {
+color: #222;
+}
+.link-box a {
+color: #555;
+}
+.link-box a:hover {
+color: #ff5e14;
+}
+.blog-title a:hover {
+color: #ff5e14;
+}
+.meta-info ul li {
+color: #9e9e9e;
+display: inline-block;
+font-size: 11px;
+padding: 0 12px;
+position: relative;
+text-transform: uppercase;
+font-weight: 700;
+}
+.embed-responsive {
+margin-bottom: 20px;
+}
+.meta-info ul li:first-child{padding-left:0}
+.meta-info ul li a{color:#ff5e14}
+.meta-info ul li a:hover{color:#444}
+.meta-info ul li::before {
+border: 1px solid #999;
+border-radius: 5px;
+content: "";
+height: 5px;
+left: -4px;
+position: absolute;
+top: 6px;
+width: 5px;
+}
+.meta-info ul li:first-child:before{display:none}
+.blog-thumb img {
+width: 100%;
+}
+.link-box a {
+font-weight: 600;
+}
+
+
   </style>
 </head>
 {% endblock %}
 
 {% block content %}
 <nav class="navbar">
+  <a class="nav-link" href="{% url 'chatbot' %}"> <img src="{% static 'images/buddy-gpt.png' %}"></a>
   <div class="signup-login">
     <a class="nav-link" href="register.html">Signup</a>
-    <a class="nav-link" href="signin">Login</a>
+    <a class="nav-link" href="signin.html">Login</a>
   </div>
 </nav>
 <div class="main-container">
@@ -466,7 +681,7 @@ a:not([href]):not([tabindex]) {
       <p id="description"></p> <!-- Description will be displayed here -->
 
       <div style="margin-top: 20px;"> <!-- Add margin-top to separate from text -->
-        <a href="register" class="try-now-button">Try Now</a> <!-- Link to register page -->
+        <a href="register.html" class="try-now-button">Try Now</a> <!-- Link to register page -->
       </div>
     </div>
     <div class="right-section">
@@ -489,7 +704,7 @@ a:not([href]):not([tabindex]) {
     <div class="slide-content">
       <h1>Intelligent Assessments</h1>
         <p>Crafted Just for You:  No one-size-fits-all tests here.  BuddyGPT tailors assessments based on your unique learning goals and progress.  Identify strengths, pinpoint weaknesses, and chart a clear path to success.</p>
-          <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="assessment.html" class="try-now">Try Now</a> <!-- Link to register page -->
+          <br><a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="assessment.html" class="try-now">Try Now</a> <!-- Link to register page -->
     </div>
   
   </div>
@@ -500,7 +715,7 @@ a:not([href]):not([tabindex]) {
     <div class="slide-content">
       <h1>Uncover Insights Hidden Within Your Documents</h1>
         <p>Struggling to grasp complex concepts within your study materials? Upload your documents to BuddyGPT and ask away!  Our advanced AI technology extracts key information and answers your questions with laser focus.</p>
-          <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="rag_search.html" class="try-now">Try Now</a> <!-- Link to register page -->
+         <br> <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="rag_search.html" class="try-now">Try Now</a> <!-- Link to register page -->
     </div>
   </div>
 
@@ -510,7 +725,7 @@ a:not([href]):not([tabindex]) {
     <div class="slide-content">
       <h1>Performance at a Glance</h1>
         <p>Gain a crystal-clear understanding of your progress with comprehensive performance reports.  BuddyGPT visually tracks your performance, highlighting areas for improvement and celebrating your achievements.</p>
-          <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="performance.html" class="try-now">Try Now</a> <!-- Link to register page -->
+        <br>  <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="performance.html" class="try-now">Try Now</a> <!-- Link to register page -->
     </div>
   </div>
 
@@ -520,7 +735,7 @@ a:not([href]):not([tabindex]) {
     <div class="slide-content">
       <h1>Personalized Learning Recommendations</h1>
         <p>BuddyGPT doesn't just assess, it guides!  Receive tailored recommendations for further study based on your individual needs.  Optimize your learning by focusing on resources that will have the most significant impact.</p>
-          <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="recommendation.html" class="try-now">Try Now</a> <!-- Link to register page -->
+         <br> <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="recommendation.html" class="try-now">Try Now</a> <!-- Link to register page -->
     </div>
   </div>
 
@@ -530,7 +745,7 @@ a:not([href]):not([tabindex]) {
     <div class="slide-content">
       <h1>Your Friendly AI Study Buddy</h1>
         <p>Never feel lost again.  BuddyGPT is your virtual study buddy, available around the clock to answer your questions, clarify concepts, and keep you motivated.Empower yourself with BuddyGPT.  Sign up today and experience the future of personalized learning!</p>
-          <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="chat.html" class="try-now">Try Now</a> <!-- Link to register page -->
+        <br>  <a style="margin-bottom: -70px; margin-left: 60px;text-decoration: none;" href="chat.html" class="try-now">Try Now</a> <!-- Link to register page -->
     </div>
   </div>
 
@@ -599,7 +814,133 @@ a:not([href]):not([tabindex]) {
 <br><br><br>
 <br>
 <br>
+<!--here top slider section ends-->
+<section class="blog-area pt-5 pb-5">
+  <div class="container">
+      <div class="row">
+          <div class="col-xl-12 text-center pb-3">
+              <div class="section-title service-title">
+                  <h2>How Kids Can Benefit</h2>
+                  <p style="font-family: DM Sans; font-size: 19px;">BuddyGPT goes beyond textbooks to create a dynamic and engaging learning experience specifically designed for kids. Here's how BuddyGPT can supercharge your child's academic journey:</p>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+              <div class="blog-wrapper home-blog-wrapper white-bg">
+                  <div class="blog-thumb">
+                      <a href="{% url 'chat' %}">
+                          <img src="{% static 'images/section1.jpg' %}" alt="" />
+                      </a>
+                  </div>
+                  <div class="meta-info">
+                      
+                  </div>
+                  <div class="blog-content home-blog">
+                      <h2 class="blog-title">
+                          <a >Instant Help, Anytime</a>
+                      </h2>
+                      <p>Struggling with a problem? BuddyGPT is always there to provide instant answers and explanations, helping kids overcome challenges and stay motivated.No more waiting for help or getting stuck on confusing concepts. BuddyGPT empowers kids to learn independently and build a love for lifelong learning! </p>
+                  </div>
+                  <div class="link-box home-blog-link">
+                      <a href="{% url 'register' %}">Sign Up</a>
+                  </div>
+              </div>
+          </div>
+          <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+              <div class="blog-wrapper home-blog-wrapper white-bg">
+                  <div class="blog-thumb">
+                          <img src="{% static 'images/section2.jpg' %}" alt="" />
+                  </div>
+                  <div class="meta-info">
+                  </div>
+                  <div class="blog-content home-blog">
+                      <h2 class="blog-title">
+                          <a>Boost Confidence with Personalized Learning</a>
+                      </h2>
+                      <p>By focusing on areas that need improvement and celebrating strengths, BuddyGPT empowers kids to build confidence in their academic abilities. It personalizes the learning experience to match each child's interests, making the process more engaging and enjoyable. </p>
+                  </div>
+                  <div class="link-box home-blog-link">
+                      <a href="{% url 'register' %}">Sign Up</a>
+                  </div>
+              </div>
+          </div>
+          <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+              <div class="blog-wrapper home-blog-wrapper white-bg">
+                  <div class="blog-thumb">
+                      
+                          <img style="height: 230px;" src="{% static 'images/section3.jpg' %}" alt="" />
+                      
+                  </div>
+                  <div class="meta-info">
+                  </div>
+                  <div class="blog-content home-blog">
+                      <h2 class="blog-title">
+                          <a>Learning that Feels Like Play</a>
+                      </h2>
+                      <p>BuddyGPT tailors content and assessments to your child's individual pace and interests, making learning feel less like a chore and more like an exciting adventure! By transforming dry concepts into exercises and rewarding curiosity, BuddyGPT sparks a love for learning that will last a lifetime.</p>
+                  </div>
+                  <div class="link-box home-blog-link">
+                      <a href="{% url 'register' %}">Sign Up</a>
+                  </div>
+              </div>
+          </div>
+
+          
+
+      </div>
+  </div>
+</section>
+
+
+
+<!--here footer section starts-->
+<br><br><br>
+<br>
+<br>
+
+<div class="footer">
+  <img class="fimg1" src="{% static 'images/footer1.png' %}">
+  <div>
+  <img class="fimg2" src="{% static 'images/footer3.png' %}">
+</div>
+<div>
+  <img class="fimg3" src="{% static 'images/footer2.png' %}">
+</div>
+
+<div class="pfooter">
+  <p>{igebra.ai} is an AI Research, Development and <br> Education Company. AI Ready School is a program <br>of {igebra.ai}.</p><br>
+  <div class="icons">
+  <a href="https://www.linkedin.com/company/igebra/"><svg style="height:30px; width:30px; fill: #C9C9C9; margin-left:6px;" class="e-font-icon-svg e-fab-linkedin" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a>
+  <a href="https://www.youtube.com/@igebra-ai"><svg style="height:30px; width:30px; fill: #C9C9C9; margin-left:15px;" class="e-font-icon-svg e-fab-youtube" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"></path></svg></a>
+  <a href="https://www.facebook.com/igebra?mibextid=2JQ9oc"><svg style="height:25px; width:30px; fill: #C9C9C9; margin-left:11px;" class="e-font-icon-svg e-fab-facebook-f" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"></path></svg></a>
+  <a href="https://www.instagram.com/igebra.ai/?igsh=dWdqczUwbzNjYzhi"><svg style="height:30px; width:30px; fill: #C9C9C9; margin-left:11px;" class="e-font-icon-svg e-fab-instagram" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"></path></svg></a>
+</div>
+  <br>
+</div>
+
+
+</div>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {% block scripts %}
 <script>
