@@ -508,7 +508,7 @@ def rag_search(request):
 
     if request.method == 'POST':
         # Get the user's query and selected document ID from the form
-        query = request.POST.get('combinedMessage', '')
+        query = request.POST.get('query', '')
         selected_doc_id = request.POST.get('document')
 
         # Retrieve the selected document object
