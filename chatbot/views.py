@@ -630,7 +630,7 @@ def rag_test(request):
         prompt = ChatPromptTemplate.from_template(
             """
             Answer the following question based only on the provided context.
-            Think step by step before providing a detailed answer.
+            You are a Questions generator bot according to context provided by user. Output should contain question, options and answer in a JSON format. The value for key 'options' should be a python list.
             I will tip you $1000 if the user finds the answer helpful.
             <context>
             {context}
@@ -651,9 +651,38 @@ def rag_test(request):
         response = retrieval_chain.invoke({"input": query})
 
         # Modify the response to include only 'input' and 'answer'
-        response = {'input': response['input'], 'answer': response['answer']}
+        response = { 'answer': response['answer']}
+        
+        print(response)
+        
+        # Clear existing AssessmentQuestion objects
+        AssessmentQuestion.objects.all().delete()
 
-        # Pass the documents, query, and response to the template
+        
+        # Assuming the response from the LLM is a JSON string that needs to be parsed
+        # Let's assume response['answer'] is already a dictionary for simplicity
+        if isinstance(response['answer'], str):
+            answer_data = json.loads(response['answer'])
+        else:
+            answer_data = response['answer']
+
+        # Check if the response contains the "questions" key
+        questions_data = answer_data.get("questions", [])############### Let's add subject, topics, format
+                                                                                    ######### in AssessmentQuestion models
+
+        # Create AssessmentQuestion objects for each question
+        for question_data in questions_data:
+            Question = question_data["question"]
+            Options = question_data.get("options", [])  # Use get() to handle missing keys gracefully
+            Answer = question_data.get("answer", "")  # Use get() to handle missing keys gracefully
+
+            # Create and save the AssessmentQuestion object
+            assessment_question = AssessmentQuestion.objects.create(
+                question=Question,
+                options=Options,
+                answer=Answer,
+            )
+            assessment_question.save()
         context = {
             'documents': documents,
             'query': query,
@@ -666,6 +695,118 @@ def rag_test(request):
         'documents': documents,
     }
     return render(request, 'rag_test.html', context)
+
+def rag_MCQInterface(request):
+    
+    assessment_questions = AssessmentQuestion.objects.all()[:10]
+    
+
+    if request.method == 'POST':
+        user = request.user
+        score = 0
+        user_answers = []
+        #topic = request.POST.get('topic')
+        #assess_type = request.POST.get('assess_type')
+
+        # Calculate the total number of questions for the max score
+        max_score = len(assessment_questions)
+
+        # Generate a unique assessment ID
+        last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
+        assessment_id = f"{user.username}-{last_assessment_number}"
+
+        
+        for question in assessment_questions:
+            selected_option_key = f'selected_options_{question.id}'
+            submitted_answer = request.POST.get(selected_option_key, None)
+
+            if submitted_answer == question.answer:
+                score += 1
+                answer_status = True
+            else:
+                answer_status = False
+
+            # Collect user's answers and question details
+            user_answers.append({
+                'question': question.question,
+                'correct_answer': question.answer,
+                'user_answer': submitted_answer or "No answer",
+                'answer_status': answer_status
+            })
+
+        # Convert the user answers to a JSON string
+        result_details_json = json.dumps(user_answers)
+
+       
+
+        return render(request, 'score.html', {
+            'score': score,
+            'max_score': max_score,
+            'user_answers': user_answers,
+        })
+        
+    
+    return render(request, 'rag_mcq.html', {'assessment_questions': assessment_questions})
+
+def rag_TFinterface(request):
+    # Fetch the True or False questions for display
+    true_false_questions = AssessmentQuestion.objects.all()[:10]  # Assuming TrueFalseQuestion is your model for True or False questions
+    
+    
+    if request.method == 'POST':
+        user = request.user
+        score = 0
+        max_score = len(true_false_questions)
+        incorrect_answers = {}
+        submitted_answers = []
+        user_answers = []
+        all_answered = True
+
+        # Generate a unique assessment ID
+        last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
+        assessment_id = f"{user.username}-{last_assessment_number}"
+        
+
+        for question in true_false_questions:
+            answer_key = f'answer_{question.id}'
+            submitted_answer = request.POST.get(answer_key)
+            submitted_answers.append(submitted_answer)
+            correct_answer = question.answer.lower()  # Convert to lowercase for case-insensitive comparison
+            submitted_answer = submitted_answer.lower()# Convert to lowercase for case-insensitive comparison
+            if submitted_answer == correct_answer:
+                score += 1
+            else:
+                # Store incorrect answers along with correct options
+                incorrect_answers[question.question] = {
+                    'submitted_answer': submitted_answer,
+                    'correct_answer': correct_answer,
+                }
+            question_data = {
+                'question': question.question,
+                'correct_answer': correct_answer,
+                'user_answer': submitted_answer if submitted_answer else "No answer"
+            }
+            user_answers.append(question_data)
+
+            if f'answer_{question.id}' not in request.POST or not request.POST.get(f'answer_{question.id}').strip():
+                all_answered = False
+                break
+
+        if not all_answered:
+            messages.error(request, 'Please select one option for each question.')
+            return render(request, 'true_n_false_interface.html', {
+                'true_false_questions': true_false_questions
+            })
+
+        # Convert the user answers to a JSON string
+        result_details_json = json.dumps(user_answers)
+
+
+        # Render the score template with the score
+        return render(request, 'score.html', {'score': score, 'max_score': max_score, 'incorrect_answers': incorrect_answers})
+
+    return render(request, 'rag_TF.html', {'true_false_questions': true_false_questions})
+
 
 def dashboard(request):
     if not request.user.is_authenticated:

@@ -26,6 +26,10 @@ urlpatterns = [
     path('activate/<uidb64>/<token>', views.activate, name='activate'),
     path('', views.about, name='about'),
 
+
+    path('rag_MCQ/', views.rag_MCQInterface, name='rag_MCQInterface'),
+    path('rag_TF/', views.rag_TFinterface, name='rag_TFinterface'),
+    
     path('interface/', views.interface, name='interface'),
     path('interface/assessment_history', views.assessment_history, name='assessment_history'),
     path('one_line_interface/', views.one_line_interface, name='one_line_interface'),
