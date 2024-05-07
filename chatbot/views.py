@@ -76,7 +76,7 @@ def signin(request):
         if user is not None:
             login(request, user)
             fname = user.first_name
-            return redirect('dashboard')  # Redirect to dashboard URL
+            return redirect('chat')  # Redirect to dashboard URL
         else:
             messages.error(request, "Bad Credentials!")
             return redirect('signin')
