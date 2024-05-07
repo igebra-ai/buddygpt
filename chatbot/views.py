@@ -594,6 +594,7 @@ def rag_test(request):
         # Get the user's query and selected document ID from the form
         query = request.POST.get('combinedMessage', '')
         selected_doc_id = request.POST.get('document')
+        
 
         # Retrieve the selected document object
         selected_document = Document.objects.get(id=selected_doc_id)
@@ -761,11 +762,6 @@ def rag_TFinterface(request):
         submitted_answers = []
         user_answers = []
         all_answered = True
-
-        # Generate a unique assessment ID
-        last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
-        assessment_id = f"{user.username}-{last_assessment_number}"
-        
 
         for question in true_false_questions:
             answer_key = f'answer_{question.id}'

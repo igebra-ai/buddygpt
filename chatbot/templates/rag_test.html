@@ -186,10 +186,10 @@ Test from Documents
         }
         // Add selected class to clicked document
         element.classList.add('selected');
-        // A                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      60000................................................... dd selected class to document name
+        // Add selected class to document name
         element.getElementsByClassName('document-name')[0].classList.add('selected');
         // Update selected document in the form
-        document.getElementById('selectedDocument').value = documentId;        
+        document.getElementById('selectedDocument').value = documentId;
     }
 
     // Function to handle double click on document
@@ -200,27 +200,11 @@ Test from Documents
     }
 
     document.querySelector('form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
         var numQuestions = document.getElementById('num_questions').value;
         var testType = document.getElementById('test_type').value;
         var difficulty = document.getElementById('difficulty').value;
         var combinedMessage = `generate ${numQuestions} questions of type ${testType} of ${difficulty} level`;
         document.getElementById('combinedMessage').value = combinedMessage;
-
-        // Determine the redirect URL based on the test type
-        var redirectUrl;
-        if (testType === 'MCQ') {
-            redirectUrl = '/rag_MCQ'; // URL for MCQ interface
-        } else if (testType === 'TF') {
-            redirectUrl = '/rag_TF'; // URL for True/False interface
-        }
-
-        // Redirect to the selected interface
-        if (redirectUrl) {
-            window.location.href = redirectUrl; // Redirect to the appropriate interface
-        } else {
-            alert('Please select a valid test type.');
-        }
     });
     
     fetch('', {
