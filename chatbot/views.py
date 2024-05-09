@@ -684,12 +684,14 @@ def rag_test(request):
                 answer=Answer,
             )
             assessment_question.save()
-        context = {
-            'documents': documents,
+        
+    
+        return JsonResponse({
             'query': query,
             'response': response,
-        }
-        return render(request, 'rag_test.html', context)
+            'success': True, 
+            'message': 'Operation successful'})
+        
 
     # Pass the documents to the template for GET requests
     context = {
