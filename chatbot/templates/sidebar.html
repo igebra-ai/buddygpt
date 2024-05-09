@@ -156,7 +156,28 @@
       <div class="submenu-item"><svg viewBox="0 0 24 24" style="width: 24px; height: 24px; overflow: visible; opacity: 1; z-index: 1; fill: rgb(197, 197, 197);"><path d="M0 0h24v24H0z" fill="none"></path><path d="M19 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5.12 10.88L12 17l-1.88-4.12L6 11l4.12-1.88L12 5l1.88 4.12L18 11l-4.12 1.88z"></path></svg>
         <a href="{% url 'recommend' %}">Recommendations</a></div>
     </div>
-    
+    <div class="footer">
+      <div class="image-container">
+          {% if user.is_authenticated %}
+          
+          <a href="{% url 'view-profile' %}">
+                <span style="margin-left: 10px;">{{ user.username }}</span>
+                <!--  <img src="{% static 'images/user-icon.png' %}" alt="Default profile picture" style="width:50px; height: 40px;"> -->
+              </a>
+              <!--{% if user.profile.profile_picture %}
+                  <a href="{% url 'view-profile' %}">
+                      <img src="{{ user.profile.profile_picture.url }}" alt="Profile picture of {{ user.username }}">
+                  </a>
+              {% else %}
+                  <a href="{% url 'view-profile' %}">
+                      <img src="{% static 'images/user-icon.png' %}" alt="Default profile picture">
+                  </a>
+              {% endif %}
+               <span style="margin-left: 10px;">{{ user.first_name }} {{ user.last_name }}</span>
+          {% else %}
+              <span style="margin-left: 10px;">Guest</span>
+          {% endif %}-->
+      </div>
   </div>
   
     
