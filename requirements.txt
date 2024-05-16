@@ -18,6 +18,7 @@ faiss-cpu
 unstructured
 mysqlclient
 langchain_experimental
+pymysql
 
 #in settings.py of django_chatbot for SMTP Configuration replace ur email and password
 
