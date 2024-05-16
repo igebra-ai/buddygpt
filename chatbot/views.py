@@ -1228,62 +1228,17 @@ def recommend(request):
             # Handle exceptions
             return JsonResponse({'success': False, 'error': str(e)})
     
-    # Fetch all assessment history records for the current user in reverse order from the AssessmentHistory database
-    user_assessment_history = AssessmentHistory.objects.filter(user=request.user).order_by('-assessment_id')
-
-    # Create a dictionary to hold the aggregated data by subject
-    aggregated_data_dict = {}
-
-    for history in user_assessment_history:
-        # Aggregate data by subject
-        aggregated_data = user_assessment_history.values('subject').annotate(
-            assessments_taken=Count('subject'),
-            total_score=Sum('score'),
-            total_max_score=Sum('max_score')
-        )
-
-        for item in aggregated_data:
-            subject = item['subject']
-            assessments_taken = item['assessments_taken']
-            total_score = item['total_score']
-            total_max_score = item['total_max_score']
-            average_score = 100 * total_score / total_max_score if total_max_score else 0
-
-            # Store the data in the dictionary
-            if subject not in aggregated_data_dict:
-                aggregated_data_dict[subject] = {
-                    'assessments_taken': assessments_taken,
-                    'average_score': average_score,
-                    'total_score': total_score,
-                    'recommendations': []  # Initialize an empty list to store recommendations
-                }
-
-    context = {
-        'aggregated_data': aggregated_data_dict,
-        'default_response': None  # Initially set default_response to None
-    }
-
-    return render(request, 'recommendation.html', context)
-
-
-
-def recommend1(request):
-    if not request.user.is_authenticated:
-        return redirect('signin')  # Redirect to the login page if the user is not authenticated
-    
-    # Fetch all assessment history records for the current user in reverse order from the AssessmentHistory database
-    user_assessment_history = AssessmentHistory.objects.filter(user=request.user).order_by('-assessment_id')
-
-    # Create a dictionary to hold the aggregated data by subject
-    aggregated_data_dict = {}
-
-    # Aggregate data for each subject
-    aggregated_data = user_assessment_history.values('subject').annotate(
-        assessments_taken=Count('subject'),
+    # Aggregate data by subject
+    aggregated_data = AssessmentHistory.objects.filter(user=request.user).values('subject').annotate(
+        assessments_taken=Count('assessment_id', distinct=True),
         total_score=Sum('score'),
         total_max_score=Sum('max_score')
     )
 
+    # Create a dictionary to hold the aggregated data by subject
+    aggregated_data_dict = {}
+
+    # Iterate over the aggregated data and populate the dictionary
     for item in aggregated_data:
         subject = item['subject']
         assessments_taken = item['assessments_taken']
@@ -1291,35 +1246,17 @@ def recommend1(request):
         total_max_score = item['total_max_score']
         average_score = 100 * total_score / total_max_score if total_max_score else 0
 
-        # Initialize the subject data in the dictionary
+        # Store the data in the dictionary
         aggregated_data_dict[subject] = {
             'assessments_taken': assessments_taken,
             'average_score': average_score,
+            'total_score': total_score,
             'recommendations': []  # Initialize an empty list to store recommendations
         }
 
-    # Create a dictionary to hold the recommendations for each subject
-    subject_recommendations = {}
-
-    # Handle the GET request to generate recommendations for a specific subject
-    subject = request.GET.get('subject')
-    if subject:
-        specific_assessment_history = user_assessment_history.filter(subject=subject)
-        recommendations = []
-        for history in specific_assessment_history:
-            default_message = f"For the assessment_id starting with {history.user}, Provide the recommendations for the subject {subject}"
-            try:
-                default_response = openai_recommendation(default_message)
-            except Exception as e:
-                default_response = str(e)  # Just for demonstration, replace with appropriate error handling
-            recommendations.append(default_response)
-        
-        subject_recommendations[subject] = recommendations
-
-    # Pass the aggregated data and recommendations to the template context
     context = {
         'aggregated_data': aggregated_data_dict,
-        'subject_recommendations': subject_recommendations,
+        'default_response': None  # Initially set default_response to None
     }
 
     return render(request, 'recommendation.html', context)
