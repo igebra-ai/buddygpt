@@ -14,3 +14,7 @@ def filesizeformat_mb(value):
 
     mb_size = value / (1024 * 1024)
     return "%.2f MB" % mb_size
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

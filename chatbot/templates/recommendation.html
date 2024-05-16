@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
-{% block title%}
+{% block title %}
 Chat with Buddy
-{% endblock%}
+{% endblock %}
 
 {% block styles %}
 <style>
@@ -12,331 +11,163 @@ Chat with Buddy
       height: 100%;
     }
 
-    .messages-box {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .messages-list {
-      padding-left: 0;
-    }
-
-    .message {
-      margin-bottom: 15px;
-      list-style: none;
-    }
-
-    .message-text {
-      padding: 10px;
-      border-radius: 5px;
-    }
-
-    .sent {
-      background-color: #dcf8c6;
-      align-self: flex-end;
-    }
-
-    .received {
-      background-color: #f1f0f0;
-      align-self: flex-start;
-    }
-
-    .message-form {
-      /*display: flex;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 10px;
-      background-color: #f8f9fa;*/
-      width: 100%;
-      padding: 9px;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      border-color: #ffffff;
-      font-family: poppins;
-
-    }
-
-    .message-input {
-      flex: 1;
-      border-radius: 0;
-      border-right: none;
-    }
-
-    .btn-send {
-      border-radius: 4px;
-      background-color: #dc3265;
-      color: #ffffff;
-      cursor: pointer;
-      border-color: #dc3265;
-      box-shadow: 0 1px 10px rgba(202, 20, 87, 0.759);
-    }
-    .btn-send:hover {
-    background-color: #c9c9c9;
-    color: #dc3265;
-    border-color: #dc3265;
-  }
-
     .chat-container {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       justify-content: center; /* Center content vertically */
       align-items: center; /* Center content horizontally */
-      padding-left: 270px; */ /* Remove or adjust this line */
-  /* padding-bottom: 10px; */
-     
+      padding-left: 290px;  /* Remove or adjust this line */
+      margin-top: 50px; /* Adjusted margin top */
     }
+
     .main-container {
-    display: flex;
-    height: 100%;
+      display: flex;
+      height: 100%;
     }
 
-    .card {
-    position: relative;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid transparent rgb(255, 255, 255);
-    width: 100%;}
+    .container-box {
+      background-color: #ffffff; /* White background */
+      border-radius: 10px; /* Rounded corners */
+      padding: 20px; /* Padding around the content */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle effect */
+      margin-bottom: 20px;
+      width: 80%; /* Adjusted width */
+    }
 
-    .form-control {
-    display: block;
-    width: 100%;
-    height: calc(1.5em + .75rem + 2px);
-    padding: .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    box-shadow: 0px 1px 10px #dc3265;
-    /*transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;*/
-}
+    .default-response-container {
+      margin-top: 20px;
+      display: none; /* Initially hide the default response container */
+    }
 
-.navbar {
-  display: flex;
-  background-color: #efefef; /* Background color */
-  width:100%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
+    /* Loading spinner styles */
+    .loading-spinner {
+      text-align: center;
+      margin-top: 10px;
+    }
 
-.navbar-nav {
-  display: flex;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  
-}
+    .spinner-border {
+      width: 2rem;
+      height: 2rem;
+      display: inline-block;
+      border-width: 2px;
+      border-color: currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spinner-border .75s linear infinite;
+    }
 
-.nav-item {
-  margin-right: 10px; /* Adjust the spacing between nav items */
-}
-
-.nav-link {
-  color: #f44067; /* Text color */
-  text-decoration: none;
-  padding: 10px;
-  font-weight: bold;
-  margin-right: 5px; /* Adjust as needed */
-  padding-left: 10; /* Removes padding on the left */
-  padding-right: 0;
-}
-
-.nav-link:hover {
-  background-color: #cccccc; /* Hover background color */
-  color:#dc3265
-}
-
-
-
-    /*container for sidebar*/
-  </style>
+    @keyframes spinner-border {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+</style>
 {% endblock %}
 
-
 {% block content %}
-
-
-  
 <div class="main-container">
-<div class="chat-container">
-  <div class="card flex-grow-1 ">
-        
-    <div class="card-body messages-box">
+  <div class="chat-container">
+    <ul class="list-unstyled messages-list">
+      <h1 style="margin-top: 20px; padding-top: 20px;">Buddy Recommendations</h1>
       
-      <ul class="list-unstyled messages-list">
+      {% for subject, data in aggregated_data.items %}
+      <div class="container-box">
+        <h3 style="padding-top: 10px;">{{ subject }}</h3>
+        <li>Assessments Taken: {{ data.assessments_taken }}</li>
+        <li>Average Score: {{ data.average_score }} %<br><br></li>
+        <!-- Pass subject to JavaScript function -->
+        <button class="generate-recommendations-btn" data-subject="{{ subject }}">Generate Recommendations</button>
         
-         <li class="message received">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
-            </div>
-            <div class="message-content">
-              Hi {{user.username}}, I am your AI Chatbot, you can ask me anything.
-            </div>
-          </div>
-        </li>
-
-        {% for chat in chats %}
-          {% if chat.user == request.user %}
-
-            <li class="message sent">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>You</b>
-            </div>
-            <div class="message-content">
-              {{chat.message}}
+        <div class="recommendations-list" style="display: none;">
+          <br><h5>Recommendations:</h5>
+          <!-- Loading Spinner -->
+          <div class="loading-spinner" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
             </div>
           </div>
-        </li>
-
-        <li class="message received">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
-            </div>
-            <div class="message-content">
-              {{chat.response}}
-            </div>
+          
+          <!-- Display recommendations here -->
+          
+          <!-- Default Response Container -->
+          <div class="default-response-container">
+            <pre><p id="default-response-{{ subject }}"></p></pre>
           </div>
-        </li>
-
-          {% endif %}
-        {% endfor %}
+        </div>
         
-      </ul>
-      
-    </div>
-    <br><br>
-    <br><br>
-    <br><br>
-  </div>
-  <form class="message-form">
-    {% csrf_token %}
-    <div class="input-group">
-      <input type="text" class="form-control message-input" id="messageInput" placeholder="Type your message...">
-
-      <div class="input-group-append">
-        <button type="button" class="btn btn-primary btn-mic">MIC</button>
-        <button type="submit" class="btn btn-primary btn-send" style="display: none;">Send</button>
       </div>
-    </div>
-  </form>
-  
+      {% endfor %}
+      
+    </ul>
+  </div>
 </div>
-</div>
+
 {% include 'sidebar copy.html' %}
 
 <script>
-  const messagesList = document.querySelector('.messages-list');
-  const messageForm = document.querySelector('.message-form');
-  const messageInput = document.getElementById('messageInput'); // Changed to use ID
-  const micButton = document.querySelector('.btn-mic');
-  const sendButton = document.querySelector('.btn-send');
-  const recognition = new webkitSpeechRecognition(); // Speech recognition object
+ // JavaScript to toggle the visibility of recommendations and fetch updated default response
+document.querySelectorAll('.generate-recommendations-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var containerBox = this.closest('.container-box'); // Find the closest container box
+        var recommendationsList = containerBox.querySelector('.recommendations-list');
+        var defaultResponseContainer = recommendationsList.querySelector('.default-response-container');
+        var loadingSpinner = recommendationsList.querySelector('.loading-spinner'); // Select the loading spinner
 
-  // Function to show mic button and hide send button
-  function showMicButton() {
-    micButton.style.display = 'inline-block';
-    sendButton.style.display = 'none';
-  }
+        if (recommendationsList.style.display === 'none') {
+            recommendationsList.style.display = 'block';
+        } else {
+            recommendationsList.style.display = 'none';
+        }
 
-  // Function to show send button and hide mic button
-  function showSendButton() {
-    micButton.style.display = 'none';
-    sendButton.style.display = 'inline-block';
-  }
+        // Show the loading spinner
+        loadingSpinner.style.display = 'block';
 
-  // Event listener for when the input field is clicked
-  messageInput.addEventListener('focus', () => {
-    showSendButton(); // Show send button when input field is clicked
-  });
+        // Retrieve subject from data attribute
+        var subject = this.getAttribute('data-subject');
 
-  // Event listener for when the input field loses focus
-  messageInput.addEventListener('blur', () => {
-    if (messageInput.value.trim() === '') {
-      showMicButton(); // Show mic button if input field is empty
-    }
-  });
+        // Send AJAX request to backend with subject
+        fetch('/recommend/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token for CSRF protection
+            },
+            body: JSON.stringify({ subject: subject })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Received recommendations:', data.default_response);
+            var defaultResponseParagraph = document.getElementById('default-response-' + subject);
+            defaultResponseParagraph.textContent = data.default_response;
 
-  // Event listener for mic button click
-  micButton.addEventListener('click', () => {
-    recognition.start(); // Start speech recognition when mic button is clicked
-  });
+            // Show default response container
+            defaultResponseContainer.style.display = 'block';
 
-  // Event listener for speech recognition result
-  recognition.onresult = (event) => {
-    const result = event.results[0][0].transcript; // Get the recognized text
-    messageInput.value += ' ' + result; // Append the recognized text to the input field
-  };
+            // Hide the loading spinner once recommendations are fetched
+            loadingSpinner.style.display = 'none';
 
-  // Event listener for form submission
-  messageForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const message = messageInput.value.trim();
-    if (message.length === 0) {
-      return;
-    }
-
-    // Add the sent message to the messages list
-    const sentMessageItem = document.createElement('li');
-    sentMessageItem.classList.add('message', 'sent');
-    sentMessageItem.innerHTML = `
-      <div class="message-text">
-        <div class="message-sender">
-          <b>You</b>
-        </div>
-        <div class="message-content">
-          ${message}
-        </div>
-      </div>`;
-    messagesList.appendChild(sentMessageItem);
-
-    // Clear the input field
-    messageInput.value = '';
-
-    // Send the message to the server via fetch
-    fetch('', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': message
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      const response = data.response;
-      // Add the received message to the messages list
-      const receivedMessageItem = document.createElement('li');
-      receivedMessageItem.classList.add('message', 'received');
-      receivedMessageItem.innerHTML = `
-        <div class="message-text">
-          <div class="message-sender">
-            <b>AI Chatbot</b>
-          </div>
-          <div class="message-content">
-            ${response}
-          </div>
-        </div>`;
-      messagesList.appendChild(receivedMessageItem);
+            // Adjust the width of the container
+            adjustContainerWidth(containerBox);
+            
+            // Scroll to the bottom of the container
+            containerBox.scrollTop = containerBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Hide the loading spinner if there's an error
+            loadingSpinner.style.display = 'none';
+        });
     });
-  });
+});
 
-  // Initially, show mic button
-  showMicButton();
+// Function to adjust the width of the container dynamically
+function adjustContainerWidth(containerBox) {
+    var pageWidth = document.documentElement.clientWidth; // Get the width of the page
+    var maxWidth = 0.8 * pageWidth; // Set the maximum width to 80% of the page width
+    containerBox.style.width = maxWidth + 'px'; // Set the width of the container
+}
+
 </script>
-
 
 {% endblock %}
