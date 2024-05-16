@@ -151,7 +151,7 @@ Test from Documents
         <!-- Form Container at the Bottom -->
         <div class="form-container">
             
-            <form method="post">
+            <form id="testForm" method="post">
                 {% csrf_token %}
                 <!-- Hidden input for combined message -->
                 <input type="hidden" id="combinedMessage" name="combinedMessage" value="">
@@ -172,7 +172,7 @@ Test from Documents
                 <!-- Number of Questions input -->
                 <div class="form-group">
                     <label for="num_questions">Number of Questions:</label>
-                    <input class="form-control" type="number" id="num_questions" name="num_questions" min="1" max="10" required>
+                    <input class="form-control" type="number" id="num_questions" name="num_questions" min="1" required>
                 </div>
 
                 <!-- Type of Test Dropdown -->
@@ -228,48 +228,48 @@ Test from Documents
         console.log('Document content will be displayed for document ID:', documentId);
     }
 
-    document.querySelector('form').addEventListener('submit', function(event) {
-        var numQuestions = document.getElementById('num_questions').value;
-        var testType = document.getElementById('test_type').value;
-        var difficulty = document.getElementById('difficulty').value;
-        var combinedMessage = `generate ${numQuestions} questions of type ${testType} of ${difficulty} level`;
-        document.getElementById('combinedMessage').value = combinedMessage;
-            // Redirect based on the selected test type
-        
-         
-        fetch('', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-              'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-              'query': combinedMessage,
-              'testType': testType
-        
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('testForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            var numQuestions = document.getElementById('num_questions').value;
+            var testType = document.getElementById('test_type').value;
+            var difficulty = document.getElementById('difficulty').value;
+            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            var combinedMessage = `generate ${numQuestions} questions of type ${testType} of ${difficulty} level`;
+
+            var postData = new URLSearchParams({
+                csrfmiddlewaretoken: csrfToken,
+                num_questions: numQuestions,
+                test_type: testType,
+                difficulty: difficulty,
+                combinedMessage
+            });
+    
+            fetch('{% url 'submit_test' %}', { // URL where your Django view handling POST requests
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: postData
             })
-          })
-          .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                var redirectUrl = '';
-                if (testType === 'MCQ') {
-                    redirectUrl = '/rag_MCQ/'; // Ensure these are the correct URLs
-                } else if (testType === 'TF') {
-                    redirectUrl = '/rag_TF/';
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect based on the selected test type
+                    let redirectUrl = testType === 'MCQ' ? '{% url "rag_MCQ" %}' : '{% url "rag_TF" %}';
+                    window.location.href = redirectUrl;
+                } else {
+                    // Handle errors
+                    console.error('Failed to process test:', data.error);
                 }
-                window.location.href = redirectUrl;
-            } else {
-                console.error('Error in form submission:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+            });
         });
-        
+    
     
     });
     

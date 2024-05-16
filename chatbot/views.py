@@ -593,6 +593,125 @@ def rag_test(request):
         # Get the user's query and selected document ID from the form
         query = request.POST.get('combinedMessage', '')
         selected_doc_id = request.POST.get('document')
+        testType = request.POST.get('test_type')
+        
+        
+        print(testType)
+        # Retrieve the selected document object
+        selected_document = Document.objects.get(id=selected_doc_id)
+
+        if selected_document.file.name.endswith('.txt'):
+            # Load text from text file
+            loader = TextLoader(selected_document.file.path, encoding="utf-8")
+            loaded_text = loader.load()
+            document_chunks = loaded_text
+        elif selected_document.file.name.endswith('.pdf'):
+            # Load text from PDF file
+            loader = PyPDFLoader(selected_document.file.path)
+            loaded_pdf = loader.load()
+            document_chunks = loaded_pdf
+        elif selected_document.file.name.endswith('.csv'):
+            # Load text from PDF file
+            loader = CSVLoader(selected_document.file.path, encoding="utf-8")
+            loaded_csv = loader.load()
+            document_chunks = loaded_csv
+
+        # Create a text splitter instance
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20)
+
+        # Split the document into smaller chunks
+        document_chunks = text_splitter.split_documents(document_chunks)
+
+        # Create a FAISS vector database from the documents
+        db = FAISS.from_documents(document_chunks, OpenAIEmbeddings())
+
+        # Load the GPT-3.5-turbo model
+        llm = ChatOpenAI(model="gpt-3.5-turbo")
+
+        # Design a chat prompt template
+        prompt = ChatPromptTemplate.from_template(
+            """
+            Answer the following question based only on the provided context.
+            You are a Questions generator bot according to context provided by user. Output should contain question, options and answer in a JSON format. The value for key 'options' should be a python list.
+            I will tip you $1000 if the user finds the answer helpful.
+            <context>
+            {context}
+            </context>
+            Question: {input}"""
+        )
+
+        # Create a document chain for processing documents
+        document_chain = create_stuff_documents_chain(llm, prompt)
+
+        # Convert the FAISS vector database to a retriever
+        retriever = db.as_retriever()
+
+        # Create a retrieval chain with the retriever and document chain
+        retrieval_chain = create_retrieval_chain(retriever, document_chain)
+
+        # Invoke the retrieval chain with the user's query
+        response = retrieval_chain.invoke({"input": query})
+
+        # Modify the response to include only 'input' and 'answer'
+        response = { 'answer': response['answer']}
+        
+        print(response)
+        
+        # Clear existing AssessmentQuestion objects
+        AssessmentQuestion.objects.all().delete()
+
+        
+        # Assuming the response from the LLM is a JSON string that needs to be parsed
+        # Let's assume response['answer'] is already a dictionary for simplicity
+        if isinstance(response['answer'], str):
+            answer_data = json.loads(response['answer'])
+        else:
+            answer_data = response['answer']
+
+        # Check if the response contains the "questions" key
+        questions_data = answer_data.get("questions", [])############### Let's add subject, topics, format
+                                                                                    ######### in AssessmentQuestion models
+
+        # Create AssessmentQuestion objects for each question
+        for question_data in questions_data:
+            Question = question_data["question"]
+            Options = question_data.get("options", [])  # Use get() to handle missing keys gracefully
+            Answer = question_data.get("answer", "")  # Use get() to handle missing keys gracefully
+
+            # Create and save the AssessmentQuestion object
+            assessment_question = AssessmentQuestion.objects.create(
+                question=Question,
+                options=Options,
+                answer=Answer,
+            )
+            assessment_question.save()
+        
+    
+        # Redirect based on the selected test type
+        if testType == 'MCQ':
+            return redirect('rag_MCQ')
+        elif testType == 'TF':
+            return redirect('rag_TF')
+        else:
+            return JsonResponse({'error': 'Invalid test type selected'}, status=400)
+
+    # Pass the documents to the template for GET requests
+    context = {
+        'documents': documents,
+    }
+    return render(request, 'rag_test.html', context)
+
+def rag_test2(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin')
+    # Retrieve all documents uploaded by the user
+    documents = Document.objects.all()
+
+    if request.method == 'POST':
+        # Get the user's query and selected document ID from the form
+        query = request.POST.get('combinedMessage', '')
+        selected_doc_id = request.POST.get('document')
         
 
         # Retrieve the selected document object
@@ -683,20 +802,25 @@ def rag_test(request):
                 answer=Answer,
             )
             assessment_question.save()
+        
+    
+        # Pass the documents, query, and response to the template
         context = {
             'documents': documents,
             'query': query,
             'response': response,
         }
-        return render(request, 'rag_test.html', context)
+        return render(request, 'rag_test2.html', context)
+        
 
     # Pass the documents to the template for GET requests
     context = {
         'documents': documents,
     }
-    return render(request, 'rag_test.html', context)
+    return render(request, 'rag_test2.html', context)
 
-def rag_MCQInterface(request):
+
+def rag_MCQ(request):
     
     assessment_questions = AssessmentQuestion.objects.all()[:10]
     
@@ -748,7 +872,7 @@ def rag_MCQInterface(request):
     
     return render(request, 'rag_mcq.html', {'assessment_questions': assessment_questions})
 
-def rag_TFinterface(request):
+def rag_TF(request):
     # Fetch the True or False questions for display
     true_false_questions = AssessmentQuestion.objects.all()[:10]  # Assuming TrueFalseQuestion is your model for True or False questions
     
@@ -802,6 +926,17 @@ def rag_TFinterface(request):
 
     return render(request, 'rag_TF.html', {'true_false_questions': true_false_questions})
 
+def submit_test(request):
+    if request.method == 'POST':
+        # Process form data
+        num_questions = request.POST.get('num_questions')
+        test_type = request.POST.get('test_type')
+        difficulty = request.POST.get('difficulty')
+
+        # Assuming form data is processed without errors
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
 
 def dashboard(request):
     if not request.user.is_authenticated:

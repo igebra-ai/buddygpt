@@ -27,8 +27,12 @@ urlpatterns = [
     path('', views.about, name='about'),
 
 
-    path('rag_MCQ/', views.rag_MCQInterface, name='rag_MCQInterface'),
-    path('rag_TF/', views.rag_TFinterface, name='rag_TFinterface'),
+    path('rag_test2', views.rag_test2, name='rag_test2'),
+    path('submit_test', views.submit_test, name='submit_test'),
+
+    path('rag_MCQ', views.rag_MCQ, name='rag_MCQ'),
+    
+    path('rag_TF', views.rag_TF, name='rag_TF'),
     
     path('interface/', views.interface, name='interface'),
     path('interface/assessment_history', views.assessment_history, name='assessment_history'),
