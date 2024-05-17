@@ -73,7 +73,7 @@ AI-Recommendations
       
       {% for subject, data in aggregated_data.items %}
       <div class="container-box">
-        <h3 style="padding-top: 10px;">{{ subject }}</h3>
+        <h3 style="padding-top: 10px;">{{ subject|title }}</h3>
         <li>Assessments Taken: {{ data.assessments_taken }}</li>
         <li>Average Score: {{ data.average_score }} %<br><br></li>
         <!-- Pass subject to JavaScript function -->

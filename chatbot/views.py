@@ -1175,7 +1175,7 @@ def openai_recommendation(query: str):
 
       system_message =  """
       You are a helpful academic score analyst. You know how to analyze the test scores of the kids and provide them with valuable recommendations on how they can improve their scores.
-      Your response should be in the following format
+      Your response should be in the following format:
       Assessment-ID: #you've to display all the assessment_id associated with the subject here \n
       Recommendation: Access the data from result_details to give tips, and solutions based on the submitted wrong response, weak topics or subjects GROUPED BY assessment_id.
       """
@@ -1242,7 +1242,7 @@ def recommend(request):
         assessments_taken = item['assessments_taken']
         total_score = item['total_score']
         total_max_score = item['total_max_score']
-        average_score = 100 * total_score / total_max_score if total_max_score else 0
+        average_score = round((100 * total_score / total_max_score),2) if total_max_score else 0
 
         # Store the data in the dictionary
         aggregated_data_dict[subject] = {
