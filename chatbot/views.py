@@ -836,9 +836,7 @@ def rag_MCQ(request):
         max_score = len(assessment_questions)
 
         # Generate a unique assessment ID
-        last_assessment_number = AssessmentHistory.objects.filter(user=request.user).count() + 1
-        assessment_id = f"{user.username}-{last_assessment_number}"
-
+       
         
         for question in assessment_questions:
             selected_option_key = f'selected_options_{question.id}'
