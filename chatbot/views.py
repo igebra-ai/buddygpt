@@ -258,8 +258,9 @@ def assessment(request):
     return render(request, 'assessment.html')
 
 
-def interface(request):
+import json
 
+def interface(request):
     assessment_questions = AssessmentQuestion.objects.all()[:10]
     assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
     assessment_topic = AssessmentTopic.objects.first()
@@ -269,8 +270,7 @@ def interface(request):
         user = request.user
         score = 0
         user_answers = []
-        #topic = request.POST.get('topic')
-        #assess_type = request.POST.get('assess_type')
+        incorrect_answers = {}
 
         # Calculate the total number of questions for the max score
         max_score = len(assessment_questions)
@@ -292,6 +292,10 @@ def interface(request):
                 answer_status = True
             else:
                 answer_status = False
+                incorrect_answers[question.question] = {
+                    'submitted_answer': submitted_answer or "No answer",
+                    'correct_answer': question.answer
+                }
 
             # Collect user's answers and question details
             user_answers.append({
@@ -324,9 +328,9 @@ def interface(request):
             'score': score,
             'max_score': max_score,
             'user_answers': user_answers,
+            'incorrect_answers': incorrect_answers,
         })
-        
-    
+
     return render(request, 'interface.html', {'assessment_questions': assessment_questions})
 
 
