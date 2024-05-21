@@ -1249,7 +1249,7 @@ def recommend(request):
         print('Received subject:', subject)
 
         # Fetch rows from AssessmentHistory where the subject matches the received subject
-        assessment_histories = AssessmentHistory.objects.filter(subject=subject)
+        assessment_histories = AssessmentHistory.objects.filter(subject=subject, user=request.user)
 
         for history in assessment_histories:
             # Append each recommendation_message to the recommendations list
