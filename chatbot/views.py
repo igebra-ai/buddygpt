@@ -1236,29 +1236,41 @@ def recommend(request):
     if not request.user.is_authenticated:
         return redirect('signin')  # Redirect to the login page if the user is not authenticated
 
+    recommendations = []
+
     if request.method == 'POST':
         # Check if the request is a POST request
-        
+
         # Retrieve the subject from the request data
         data = json.loads(request.body)
         subject = data.get('subject')
-        
+
         # Print the received subject
         print('Received subject:', subject)
-        
+
+        # Fetch rows from AssessmentHistory where the subject matches the received subject
+        assessment_histories = AssessmentHistory.objects.filter(subject=subject)
+
+        for history in assessment_histories:
+            # Append each recommendation_message to the recommendations list
+            if history.recommendation_message:
+                recommendations.extend(history.recommendation_message)
+
+        print('recommendations 1', recommendations)
+
         try:
             # Construct a default message for recommendation specific to the current subject
             default_message = f"For the assessment_id starting with {request.user}, Provide the recommendations for the subject {subject}"
 
             # Generate recommendations based on the default message
             default_response = openai_recommendation(default_message)
-            
-            # Return the default_response as part of the JSON response
-            return JsonResponse({'success': True, 'default_response': default_response})
+
+            # Return the recommendations and default_response as part of the JSON response
+            return JsonResponse({'success': True, 'recommendations': recommendations, 'default_response': default_response})
         except Exception as e:
             # Handle exceptions
             return JsonResponse({'success': False, 'error': str(e)})
-    
+
     # Aggregate data by subject
     aggregated_data = AssessmentHistory.objects.filter(user=request.user).values('subject').annotate(
         assessments_taken=Count('assessment_id', distinct=True),
@@ -1275,7 +1287,7 @@ def recommend(request):
         assessments_taken = item['assessments_taken']
         total_score = item['total_score']
         total_max_score = item['total_max_score']
-        average_score = round((100 * total_score / total_max_score),2) if total_max_score else 0
+        average_score = round((100 * total_score / total_max_score), 2) if total_max_score else 0
 
         # Store the data in the dictionary
         aggregated_data_dict[subject] = {
@@ -1287,10 +1299,12 @@ def recommend(request):
 
     context = {
         'aggregated_data': aggregated_data_dict,
-        'default_response': None  # Initially set default_response to None
+        'default_response': None,  # Initially set default_response to None
+        'recommendations': recommendations
     }
 
     return render(request, 'recommendation.html', context)
+
 
 
 def end(request):
