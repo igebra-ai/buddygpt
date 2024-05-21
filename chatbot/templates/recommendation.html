@@ -18,7 +18,7 @@ AI-Recommendations
         justify-content: center; /* Center content vertically */
         align-items: center; /* Center content horizontally */
         padding-left: 200px;  /* Adjust or remove as needed */
-        margin-top: 50px; /* Adjusted margin top */
+        margin-top: 20px; /* Adjusted margin top */
     }
 
     .main-container {
@@ -66,7 +66,7 @@ AI-Recommendations
 {% block content %}
 <div class="main-container container">
     <div class="chat-container">
-        <h1 class="mt-4">Buddy Recommendations</h1>
+        <h1 class="mt-4">Buddy Recommendations</h1> <br>
         <ul class="list-unstyled messages-list">
             {% for subject, data in aggregated_data.items %}
             <div class="container-box card">
