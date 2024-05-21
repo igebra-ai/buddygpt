@@ -277,7 +277,7 @@ import json
 
 def interface(request):
     assessment_questions = AssessmentQuestion.objects.all()[:10]
-    assessment_subject = AssessmentSubject.objects.first()  # Assuming you want to fetch the first subject
+    assessment_subject = AssessmentSubject.objects.first()
     assessment_topic = AssessmentTopic.objects.first()
     assessment_format = AssessmentFormat.objects.last()
 
@@ -323,15 +323,15 @@ def interface(request):
         # Convert the user answers to a JSON string
         result_details_json = json.dumps(user_answers)
 
-        # Generate recommendation for the wrong responses here ####
-        message = []
+        # Generate recommendation for the wrong responses
+        messages = []
         for q, a in incorrect_answers.items():
             default_message = f"Sorry, but your answer for question '{q}' was incorrect. The correct answer was '{a['correct_answer']}' whereas your answer was '{a['submitted_answer']}'."
             default_response = score_recommendation(default_message)
-            message.append(default_response)
-        ###########################################################
+            messages.append(default_response)
 
-        recommendation_message_json = json.dumps(message)
+        # Serialize the recommendation messages into JSON format
+        recommendation_message_json = json.dumps(messages)
 
         # Create a single AssessmentHistory instance for this assessment
         AssessmentHistory.objects.create(
@@ -343,19 +343,21 @@ def interface(request):
             subject=subject,
             topic=topic,
             type=format,
-            recommendation_message=recommendation_message_json
+            recommendation_message=messages
         )
 
+        # Debug prints for development
         print("Subject:", subject)
         print("Topic:", topic)
         print("Format:", format)
+        print("recommendation_message", messages)
 
         return render(request, 'score.html', {
             'score': score,
             'max_score': max_score,
             'user_answers': user_answers,
             'incorrect_answers': incorrect_answers,
-            'recommendation_message': message,
+            'recommendation_message': messages,
         })
 
     return render(request, 'interface.html', {'assessment_questions': assessment_questions})

@@ -262,9 +262,11 @@ Past Assessments
     <div id="recommendation{{ forloop.counter }}" class="recommendation-popup">
       <div class="close-popup" onclick="closeRecommendation('recommendation{{ forloop.counter }}')">&times;</div>
       <div>
+        <ul>
         {% for message in history.recommendation_message %}
-            <p>{{ message }}</p>
+            <li><pre>{{ message }}</pre></li>
         {% endfor %}
+      </ul>
       </div>
     </div>
 
