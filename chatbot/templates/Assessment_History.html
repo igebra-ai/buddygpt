@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title%}
+{% block title %}
 Past Assessments
-{% endblock%}
+{% endblock %}
 
 {% block styles %}
 <style>
@@ -26,7 +26,7 @@ Past Assessments
 
   .container {
     margin-left: 300px;
-    margin-top: 20px; 
+    margin-top: 20px;
     padding: 20px;
     overflow: hidden;
   }
@@ -65,29 +65,30 @@ Past Assessments
     margin-bottom: 40px;
   }
 
-  .result-details-popup {
-  display: none;
-  position: fixed;
-  top: 50%; /* Center vertically */
-  left: 55%;
-  transform: translate(-50%, -50%); /* Center horizontally */
-  width: 48%;
-  max-height: 80%;
-  overflow-y: auto; /* Enable vertical scroll if content exceeds max height */
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  margin-bottom: 100px; /* Margin from the bottom */
-}
+  .result-details-popup,
+  .recommendation-popup {
+    display: none;
+    position: fixed;
+    top: 50%; /* Center vertically */
+    left: 55%;
+    transform: translate(-50%, -50%); /* Center horizontally */
+    width: 48%;
+    max-height: 80%;
+    overflow-y: auto; /* Enable vertical scroll if content exceeds max height */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-bottom: 100px; /* Margin from the bottom */
+  }
 
-  
   .assessment-item {
     margin-bottom: 20px;
   }
 
-  .view-results-btn {
+  .view-results-btn,
+  .view-recommendation-btn {
     cursor: pointer;
     background-color: rgb(216, 27, 93);
     color: white;
@@ -97,38 +98,25 @@ Past Assessments
     border-radius: 5px;
     font-size: 14px;
   }
+
   .assessment-table {
     width: 100%;
     border-collapse: collapse;
   }
-  
+
   .assessment-table th, .assessment-table td {
     border: 1px solid #ddd;
     padding: 8px;
   }
-  
+
   .assessment-table tr:nth-child(even){background-color: #f2f2f2;}
-  
+
   .assessment-table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
     background-color: rgb(216, 27, 93);
     color: white;
-  }
-
-  .result-details-btn {
-    /* Style adjustments for buttons within table */
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
   }
 
   .popup-overlay {
@@ -155,17 +143,6 @@ Past Assessments
     margin-bottom: 300px;
   }
 
-  
-  .close-popup {
-    cursor: pointer;
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
-
   .close-popup {
     color: #aaa;
     float: right;
@@ -190,7 +167,7 @@ Past Assessments
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
-    
+
   }
 
   .view-chart-btn-wrapper {
@@ -198,8 +175,6 @@ Past Assessments
     justify-content: center; /* Aligns the button horizontally in the center */
     margin: 20px 0; /* Adds some space above and below the button */
   }
- 
-
 </style>
 {% endblock %}
 
@@ -210,7 +185,7 @@ Past Assessments
   {% include 'sidebar.html' %}
 </div>
 <div class="container">
-  <h1 style="align-content: center;"> Past Assessments </h1> 
+  <h1 style="align-content: center;"> Past Assessments </h1>
   <br>
   <div class="statistics">
     <div class="stat-item">
@@ -243,7 +218,8 @@ Past Assessments
           <th>Score</th>
           <th>Format</th>
           <th>Date Taken</th>
-          <th>Actions</th>
+          <th>Result Details</th>
+          <th>Recommendations</th>
         </tr>
       </thead>
       <tbody>
@@ -254,9 +230,12 @@ Past Assessments
           <td>{{ history.topic }}</td>
           <td>{{ history.score }} / {{history.max_score}}</td>
           <td>{{ history.type }}</td>
-          <td>{{ history.date_taken|date:"Y-m-d " }}</td> 
+          <td>{{ history.date_taken|date:"Y-m-d " }}</td>
           <td>
             <button class="view-results-btn" onclick="showResultDetails('resultDetails{{ forloop.counter }}')">View Result Details</button>
+          </td>
+          <td>
+            <button class="view-recommendation-btn" onclick="showRecommendation('recommendation{{ forloop.counter }}')">View Recommendations</button>
           </td>
         </tr>
         {% endfor %}
@@ -268,7 +247,7 @@ Past Assessments
     <div id="resultDetails{{ forloop.counter }}" class="result-details-popup">
 
       <div class="close-popup" onclick="closeResultDetails('resultDetails{{ forloop.counter }}')">&times;</div>
-      
+
         <div>
           {% for detail in history.result_details %}
               <div>
@@ -279,6 +258,16 @@ Past Assessments
           {% endfor %}
       </div>
     </div>
+
+    <div id="recommendation{{ forloop.counter }}" class="recommendation-popup">
+      <div class="close-popup" onclick="closeRecommendation('recommendation{{ forloop.counter }}')">&times;</div>
+      <div>
+        {% for message in history.recommendation_message %}
+            <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+    </div>
+
     {% endfor %}
   {% else %}
     <p>No assessment history found.</p>
@@ -306,7 +295,7 @@ Past Assessments
     const labels = assessmentData.map(data => data.assessmentNumber);
     const scores = assessmentData.map(data => data.score);
     const maxScores = assessmentData.map(data => data.maxScore);
-    
+
     const ctx = document.getElementById('scoreChart').getContext('2d');
     const scoreChart = new Chart(ctx, {
       type: 'line',
@@ -366,18 +355,19 @@ Past Assessments
         }
       }
     });
-    
+
     // Popup functions
     window.showChartPopup = function() {
       document.getElementById('chartPopup').style.display = 'block';
       // Might need to call chart's update method if the chart is not visible initially
       scoreChart.update();
     };
-    
+
     window.closeChartPopup = function() {
       document.getElementById('chartPopup').style.display = 'none';
     };
   });
+
   function showResultDetails(id) {
     var popup = document.getElementById(id);
     popup.style.display = 'block';
@@ -387,6 +377,16 @@ Past Assessments
     var popup = document.getElementById(id);
     popup.style.display = 'none';
   }
- 
+
+  function showRecommendation(id) {
+    var popup = document.getElementById(id);
+    popup.style.display = 'block';
+  }
+
+  function closeRecommendation(id) {
+    var popup = document.getElementById(id);
+    popup.style.display = 'none';
+  }
+
 </script>
 {% endblock %}

@@ -257,6 +257,21 @@ def assessment(request):
 
     return render(request, 'assessment.html')
 
+def score_recommendation(message):
+    system_message =  """
+      You are a helpful academic score analyst. Your job is to analyze the questions with wrong response and give the approach to the correct solutions.
+      """
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": message},
+        ]
+    )
+
+    answer = response.choices[0].message.content.strip()
+    return answer
+
 
 import json
 
@@ -308,6 +323,16 @@ def interface(request):
         # Convert the user answers to a JSON string
         result_details_json = json.dumps(user_answers)
 
+        # Generate recommendation for the wrong responses here ####
+        message = []
+        for q, a in incorrect_answers.items():
+            default_message = f"Sorry, but your answer for question '{q}' was incorrect. The correct answer was '{a['correct_answer']}' whereas your answer was '{a['submitted_answer']}'."
+            default_response = score_recommendation(default_message)
+            message.append(default_response)
+        ###########################################################
+
+        recommendation_message_json = json.dumps(message)
+
         # Create a single AssessmentHistory instance for this assessment
         AssessmentHistory.objects.create(
             assessment_id=assessment_id,
@@ -317,7 +342,8 @@ def interface(request):
             result_details=result_details_json,
             subject=subject,
             topic=topic,
-            type=format
+            type=format,
+            recommendation_message=recommendation_message_json
         )
 
         print("Subject:", subject)
@@ -329,6 +355,7 @@ def interface(request):
             'max_score': max_score,
             'user_answers': user_answers,
             'incorrect_answers': incorrect_answers,
+            'recommendation_message': message,
         })
 
     return render(request, 'interface.html', {'assessment_questions': assessment_questions})
@@ -441,7 +468,7 @@ def assessment_history(request):
         return redirect('signin')
     
     # Fetch all assessment history records for the current user in reverse order from the AssessmentHistory database
-    user_assessment_history = AssessmentHistory.objects.filter(user=request.user).order_by('-assessment_id')
+    user_assessment_history = AssessmentHistory.objects.filter(user=request.user).order_by('-date_taken')
     total_assessments = user_assessment_history.count()
     
     # Calculate total obtained score and total maximum possible score

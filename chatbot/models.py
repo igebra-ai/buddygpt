@@ -34,7 +34,8 @@ class AssessmentHistory(models.Model):
     date_taken = models.DateTimeField(auto_now_add=True, null=False)
     subject = models.CharField(max_length=255)  # New field for subject
     topic = models.CharField(max_length=255)    # New field for topic
-    type = models.CharField(max_length=255) 
+    type = models.CharField(max_length=255)
+    recommendation_message = models.JSONField(null=True, blank=True) 
     
     
     def __str__(self):

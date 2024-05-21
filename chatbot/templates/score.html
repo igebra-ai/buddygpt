@@ -332,6 +332,14 @@
       </li>
       {% endfor %}
     </ul>
+    <!-- Displaying Recommendation below -->
+      <h3 style="font-size: 19px;">Recommendations:</h3>
+      <ul>
+        {% for msg in recommendation_message %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+      </ul>
+      <!-- Displaying Recommendation above -->
   </div>
   {% else %}
   <div class="js-container container" style="top:0px !important;">
