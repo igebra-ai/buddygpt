@@ -32,7 +32,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI()
 
-def ask_openai(message):
+def ask_openai0(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -43,6 +43,50 @@ def ask_openai(message):
 
     answer = response.choices[0].message.content.strip()
     return answer
+
+def ask_openai(message):
+    def generate(message: str) -> str:
+      host = '89.117.157.241'
+      port = '3306'
+      username = 'u913411133_badmin3'
+      password = '9z!|]>cQa3T$'
+      database_schema = 'u913411133_bgpt1'
+      mysql_uri = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database_schema}"
+
+      db = SQLDatabase.from_uri(mysql_uri, include_tables=['chatbot_assessmentquestion','chatbot_assessmenthistory'],sample_rows_in_table_info=2)
+
+      db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
+      
+      def retrieve_from_db(message: str) -> str:
+        db_context = db_chain(message)
+        db_context = db_context['result'].strip()
+        return db_context
+      db_context = retrieve_from_db(message)
+
+      system_message =  """
+      You are a conversational bot that has access to the user's data. 
+      If the user's query is related to the database, you've to look up in the database and provide relevant information.
+      Else if the user's query is not related to the database then youb may responsd normally like a conversatinal chatbot with all the knowledge you've other than the database fedd to you.
+      """
+      
+      human_qry_template = HumanMessagePromptTemplate.from_template(
+          """Input:
+          {human_input}
+
+          Context:
+          {db_context}
+
+          Output:
+          """
+      )
+      messages = [
+        SystemMessage(content=system_message),
+        human_qry_template.format(human_input=message, db_context=db_context)
+      ]
+      response = llm(messages).content
+      #print(response)
+      return response
+    return generate(message)
 
 # Create your views here.
 
