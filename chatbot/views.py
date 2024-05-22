@@ -22,6 +22,14 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth import authenticate, login, logout
 from . tokens import generate_token
+from langchain.utilities import SQLDatabase
+from langchain.llms import OpenAI
+from langchain_experimental.sql import SQLDatabaseChain
+from langchain_core.prompts import PromptTemplate
+from langchain.prompts import PromptTemplate
+from langchain.prompts.chat import HumanMessagePromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
 from django.utils.encoding import force_bytes
 try:
     from django.utils.encoding import force_text
@@ -44,51 +52,74 @@ def ask_openai0(message):
     answer = response.choices[0].message.content.strip()
     return answer
 
-def ask_openai(message):
-    def generate(message: str) -> str:
-      host = '89.117.157.241'
-      port = '3306'
-      username = 'u913411133_badmin3'
-      password = '9z!|]>cQa3T$'
-      database_schema = 'u913411133_bgpt1'
-      mysql_uri = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database_schema}"
+llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY)
 
-      db = SQLDatabase.from_uri(mysql_uri, include_tables=['chatbot_assessmentquestion','chatbot_assessmenthistory'],sample_rows_in_table_info=2)
+def ask_openai(message, user):
+    def generate(message: str, user) -> str:
+        host = '89.117.157.241'
+        port = '3306'
+        username = 'u913411133_badmin3'
+        password = '9z!|]>cQa3T$'
+        database_schema = 'u913411133_bgpt1'
+        mysql_uri = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database_schema}"
 
-      db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
-      
-      def retrieve_from_db(message: str) -> str:
-        db_context = db_chain(message)
-        db_context = db_context['result'].strip()
-        return db_context
-      db_context = retrieve_from_db(message)
+        db = SQLDatabase.from_uri(mysql_uri, include_tables=['chatbot_assessmenthistory'], sample_rows_in_table_info=2)
+        
+        db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
 
-      system_message =  """
-      You are a conversational bot that has access to the user's data. 
-      If the user's query is related to the database, you've to look up in the database and provide relevant information.
-      Else if the user's query is not related to the database then youb may responsd normally like a conversatinal chatbot with all the knowledge you've other than the database fedd to you.
-      """
-      
-      human_qry_template = HumanMessagePromptTemplate.from_template(
-          """Input:
-          {human_input}
+        def retrieve_from_db(message: str, user) -> str:
+            user_specific_query = f"SELECT subject, topic, type, recommendation_message FROM chatbot_assessmenthistory WHERE user_id = {user.id} LIMIT 5"
+            print(f"Executing query: {user_specific_query}")  # Debug statement
+            db_context = db_chain.run(user_specific_query)
+            print(f"Query result: {db_context}")  # Debug statement
 
-          Context:
-          {db_context}
+            db_context = str(db_context).strip()  # Convert result to string and strip whitespace
+            return db_context
 
-          Output:
-          """
-      )
-      messages = [
-        SystemMessage(content=system_message),
-        human_qry_template.format(human_input=message, db_context=db_context)
-      ]
-      response = llm(messages).content
-      #print(response)
-      return response
-    return generate(message)
+        db_context = retrieve_from_db(message, user)
+
+        system_message = f"""
+        You are a conversational bot that has access to the user's data (with user_id {user.id}). 
+        If the user's query is related to the database, you've to look up in the database and provide relevant information.
+        Else if the user's query is not related to the database then you may respond normally like a conversational chatbot with all the knowledge you've other than the database fed to you.
+        """
+
+        human_qry_template = HumanMessagePromptTemplate.from_template(
+            """Input:
+            {human_input}
+
+            Context:
+            {db_context}
+
+            Output:
+            """
+        )
+
+        messages = [
+            SystemMessage(content=system_message),
+            human_qry_template.format(human_input=message, db_context=db_context)
+        ]
+
+        response = llm(messages).content
+        return response
+
+    return generate(message, user)
 
 # Create your views here.
+def chat(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin')
+
+    if request.method == 'POST':
+        user = request.user
+        message = request.POST.get('message')
+        response = ask_openai(message, user)
+
+        return JsonResponse({'message': message, 'response': response})
+
+    return render(request, 'chat.html')
+
 
 def chatbot(request):
     if request.method == 'POST':
@@ -97,17 +128,6 @@ def chatbot(request):
 
         return JsonResponse({'message': message, 'response': response})
     return render(request, 'chatbot.html')
-
-def chat(request):
-    if not request.user.is_authenticated:
-        # Redirect the user to the login page, or return a suitable response
-        return redirect('signin')
-    if request.method == 'POST':
-        message = request.POST.get('message')
-        response = ask_openai(message)
-
-        return JsonResponse({'message': message, 'response': response})
-    return render(request, 'chat.html')
 
 def signin(request):
     if request.method == 'POST':
@@ -1208,16 +1228,6 @@ def dashboard_recommend(request, question_id=None):
     return render(request, 'recommendation copy.html', {'question': question,'sorted_subjects': sorted_subjects,
         'lowest_scoring_subject': lowest_scoring_subject})
 
-from langchain.utilities import SQLDatabase
-from langchain.llms import OpenAI
-from langchain_experimental.sql import SQLDatabaseChain
-from langchain_core.prompts import PromptTemplate
-from langchain.prompts import PromptTemplate
-from langchain.prompts.chat import HumanMessagePromptTemplate
-from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
-
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY)
 
 ## setting up connection connection with SQL DB
 host = '89.117.157.241'
