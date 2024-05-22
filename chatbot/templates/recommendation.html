@@ -129,10 +129,10 @@ document.querySelectorAll('.generate-recommendations-btn').forEach(function(btn)
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Received recommendations:', data.recommendations);
+            console.log('Received recommendations:', data.default_response);
             var defaultResponseParagraph = document.getElementById('default-response-' + subject);
-
-            // Clear previous recommendations
+            defaultResponseParagraph.textContent = data.default_response;
+            /*/ Clear previous recommendations
             defaultResponseParagraph.innerHTML = '';
 
             // Append each recommendation as a list item
@@ -141,7 +141,7 @@ document.querySelectorAll('.generate-recommendations-btn').forEach(function(btn)
                 listItem.className = 'list-group-item';
                 listItem.textContent = recommendation;
                 defaultResponseParagraph.appendChild(listItem);
-            });
+            }); */
 
             // Show default response container
             defaultResponseContainer.style.display = 'block';

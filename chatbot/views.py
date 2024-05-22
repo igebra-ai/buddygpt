@@ -1207,10 +1207,9 @@ def openai_recommendation(query: str):
       db_context = retrieve_from_db(query)
 
       system_message =  """
-      You are a helpful academic score analyst. You know how to analyze the test scores of the kids and provide them with valuable recommendations on how they can improve their scores.
+      You are a helpful academic score analyst.Analyze the test scores from result_details to give tips, and solutions based on the submitted wrong response, weak topics or subjects GROUPED BY assessment_id and provide them with valuable recommendations on how they can improve their scores.
       Your response should be in the following format:
-      Assessment-ID: #you've to display all the assessment_id associated with the subject here \n
-      Recommendation: Access the data from result_details to give tips, and solutions based on the submitted wrong response, weak topics or subjects GROUPED BY assessment_id.
+      Recommendation: #your response should be technqiues to improve the score, performance or how to understand the concept in a better way based on the data your recieved from results_detials.
       """
       
       human_qry_template = HumanMessagePromptTemplate.from_template(
