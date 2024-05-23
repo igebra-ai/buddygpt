@@ -1588,8 +1588,8 @@ getting started
   height: 400px;
   width: 350px;
   position: absolute; 
-  bottom: -23px; 
-  right: 115px;
+  bottom: -4%; 
+  right:8%;
 }
 
 .free-quote .row{
