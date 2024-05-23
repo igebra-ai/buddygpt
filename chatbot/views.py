@@ -22,6 +22,14 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth import authenticate, login, logout
 from . tokens import generate_token
+from langchain.utilities import SQLDatabase
+from langchain.llms import OpenAI
+from langchain_experimental.sql import SQLDatabaseChain
+from langchain_core.prompts import PromptTemplate
+from langchain.prompts import PromptTemplate
+from langchain.prompts.chat import HumanMessagePromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
 from django.utils.encoding import force_bytes
 try:
     from django.utils.encoding import force_text
@@ -32,7 +40,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI()
 
-def ask_openai(message):
+def ask_openai0(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -44,7 +52,74 @@ def ask_openai(message):
     answer = response.choices[0].message.content.strip()
     return answer
 
+llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY)
+
+def ask_openai(message, user):
+    def generate(message: str, user) -> str:
+        host = '89.117.157.241'
+        port = '3306'
+        username = 'u913411133_badmin3'
+        password = '9z!|]>cQa3T$'
+        database_schema = 'u913411133_bgpt1'
+        mysql_uri = f"mysql+pymysql://{username}:{password}@{host}:{port}/{database_schema}"
+
+        db = SQLDatabase.from_uri(mysql_uri, include_tables=['chatbot_assessmenthistory'], sample_rows_in_table_info=2)
+        
+        db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
+
+        def retrieve_from_db(message: str, user) -> str:
+            user_specific_query = f"SELECT subject, topic, type, recommendation_message FROM chatbot_assessmenthistory WHERE user_id = {user.id} LIMIT 5"
+            print(f"Executing query: {user_specific_query}")  # Debug statement
+            db_context = db_chain.run(user_specific_query)
+            print(f"Query result: {db_context}")  # Debug statement
+
+            db_context = str(db_context).strip()  # Convert result to string and strip whitespace
+            return db_context
+
+        db_context = retrieve_from_db(message, user)
+
+        system_message = f"""
+        You are a conversational bot that has access to the user's data (with user_id {user.id}). 
+        If the user's query is related to the database, you've to look up in the database and provide relevant information.
+        Else if the user's query is not related to the database then you may respond normally like a conversational chatbot with all the knowledge you've other than the database fed to you.
+        """
+
+        human_qry_template = HumanMessagePromptTemplate.from_template(
+            """Input:
+            {human_input}
+
+            Context:
+            {db_context}
+
+            Output:
+            """
+        )
+
+        messages = [
+            SystemMessage(content=system_message),
+            human_qry_template.format(human_input=message, db_context=db_context)
+        ]
+
+        response = llm(messages).content
+        return response
+
+    return generate(message, user)
+
 # Create your views here.
+def chat(request):
+    if not request.user.is_authenticated:
+        # Redirect the user to the login page, or return a suitable response
+        return redirect('signin')
+
+    if request.method == 'POST':
+        user = request.user
+        message = request.POST.get('message')
+        response = ask_openai(message, user)
+
+        return JsonResponse({'message': message, 'response': response})
+
+    return render(request, 'chat.html')
+
 
 def chatbot(request):
     if request.method == 'POST':
@@ -53,17 +128,6 @@ def chatbot(request):
 
         return JsonResponse({'message': message, 'response': response})
     return render(request, 'chatbot.html')
-
-def chat(request):
-    if not request.user.is_authenticated:
-        # Redirect the user to the login page, or return a suitable response
-        return redirect('signin')
-    if request.method == 'POST':
-        message = request.POST.get('message')
-        response = ask_openai(message)
-
-        return JsonResponse({'message': message, 'response': response})
-    return render(request, 'chat.html')
 
 def signin(request):
     if request.method == 'POST':
@@ -1164,16 +1228,6 @@ def dashboard_recommend(request, question_id=None):
     return render(request, 'recommendation copy.html', {'question': question,'sorted_subjects': sorted_subjects,
         'lowest_scoring_subject': lowest_scoring_subject})
 
-from langchain.utilities import SQLDatabase
-from langchain.llms import OpenAI
-from langchain_experimental.sql import SQLDatabaseChain
-from langchain_core.prompts import PromptTemplate
-from langchain.prompts import PromptTemplate
-from langchain.prompts.chat import HumanMessagePromptTemplate
-from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
-
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY)
 
 ## setting up connection connection with SQL DB
 host = '89.117.157.241'
@@ -1207,10 +1261,9 @@ def openai_recommendation(query: str):
       db_context = retrieve_from_db(query)
 
       system_message =  """
-      You are a helpful academic score analyst. You know how to analyze the test scores of the kids and provide them with valuable recommendations on how they can improve their scores.
+      You are a helpful academic score analyst.Analyze the test scores from result_details to give tips, and solutions based on the submitted wrong response, weak topics or subjects GROUPED BY assessment_id and provide them with valuable recommendations on how they can improve their scores.
       Your response should be in the following format:
-      Assessment-ID: #you've to display all the assessment_id associated with the subject here \n
-      Recommendation: Access the data from result_details to give tips, and solutions based on the submitted wrong response, weak topics or subjects GROUPED BY assessment_id.
+      Recommendation: #your response should be technqiues to improve the score, performance or how to understand the concept in a better way based on the data your recieved from results_detials.
       """
       
       human_qry_template = HumanMessagePromptTemplate.from_template(
@@ -1236,29 +1289,41 @@ def recommend(request):
     if not request.user.is_authenticated:
         return redirect('signin')  # Redirect to the login page if the user is not authenticated
 
+    recommendations = []
+
     if request.method == 'POST':
         # Check if the request is a POST request
-        
+
         # Retrieve the subject from the request data
         data = json.loads(request.body)
         subject = data.get('subject')
-        
+
         # Print the received subject
         print('Received subject:', subject)
-        
+
+        # Fetch rows from AssessmentHistory where the subject matches the received subject
+        assessment_histories = AssessmentHistory.objects.filter(subject=subject, user=request.user)
+
+        for history in assessment_histories:
+            # Append each recommendation_message to the recommendations list
+            if history.recommendation_message:
+                recommendations.extend(history.recommendation_message)
+
+        print('recommendations 1', recommendations)
+
         try:
             # Construct a default message for recommendation specific to the current subject
             default_message = f"For the assessment_id starting with {request.user}, Provide the recommendations for the subject {subject}"
 
             # Generate recommendations based on the default message
             default_response = openai_recommendation(default_message)
-            
-            # Return the default_response as part of the JSON response
-            return JsonResponse({'success': True, 'default_response': default_response})
+
+            # Return the recommendations and default_response as part of the JSON response
+            return JsonResponse({'success': True, 'recommendations': recommendations, 'default_response': default_response})
         except Exception as e:
             # Handle exceptions
             return JsonResponse({'success': False, 'error': str(e)})
-    
+
     # Aggregate data by subject
     aggregated_data = AssessmentHistory.objects.filter(user=request.user).values('subject').annotate(
         assessments_taken=Count('assessment_id', distinct=True),
@@ -1275,7 +1340,7 @@ def recommend(request):
         assessments_taken = item['assessments_taken']
         total_score = item['total_score']
         total_max_score = item['total_max_score']
-        average_score = round((100 * total_score / total_max_score),2) if total_max_score else 0
+        average_score = round((100 * total_score / total_max_score), 2) if total_max_score else 0
 
         # Store the data in the dictionary
         aggregated_data_dict[subject] = {
@@ -1287,10 +1352,12 @@ def recommend(request):
 
     context = {
         'aggregated_data': aggregated_data_dict,
-        'default_response': None  # Initially set default_response to None
+        'default_response': None,  # Initially set default_response to None
+        'recommendations': recommendations
     }
 
     return render(request, 'recommendation.html', context)
+
 
 
 def end(request):

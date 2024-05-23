@@ -26,42 +26,6 @@
     display: flex;
   }
 
-  .navbar {
-  display: flex;
-  background-color: #efefef; /* Background color */
-  width:100%;
-  padding-left: 17%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  
-}
-
-.navbar-nav {
-  display: flex;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  
-}
-
-.nav-item {
-  margin-right: 10px; /* Adjust the spacing between nav items */
-}
-
-.nav-link {
-  color: #f44067; /* Text color */
-  text-decoration: none;
-  padding: 10px;
-  font-weight: bold;
-  margin-right: 5px; /* Adjust as needed */
-  padding-left: 10; /* Removes padding on the left */
-  padding-right: 0;
-}
-
-.nav-link:hover {
-  background-color: #cccccc; /* Hover background color */
-  color:#dc3265
-}
-
 
 @keyframes confetti-slow {
   0% {
@@ -300,16 +264,7 @@
 
 
 {% block content %}
-<nav class="navbar">
-  {% if user.is_authenticated %}
-  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
-  <a class="nav-link" style="margin-left: auto;font-size: 20px;" href="logout">Logout</a>
-  {% else %}
-  <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="{% static 'images/buddy.png' %}" alt="BuddyGPT" style="width: 228px; height: 53px;"></a>
-  <a class="nav-link" style="margin-left: auto;" href="signin">Login</a>
-  <a class="nav-link"  style="margin-left: auto;" href="register">Register</a>
-  {% endif %}
-</nav>
+
 <div class="main-container">
    {% include 'sidebar.html' %}
 <div class="container">

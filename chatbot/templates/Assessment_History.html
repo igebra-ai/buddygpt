@@ -226,7 +226,7 @@ Past Assessments
         {% for history in assessment_history %}
         <tr>
           <td>{{ history.assessment_id }}</td>
-          <td>{{ history.subject }}</td>
+          <td>{{ history.subject|title }}</td>
           <td>{{ history.topic }}</td>
           <td>{{ history.score }} / {{history.max_score}}</td>
           <td>{{ history.type }}</td>
