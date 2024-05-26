@@ -23,8 +23,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth import authenticate, login, logout
 from . tokens import generate_token
-from langchain.utilities import SQLDatabase
-from langchain.llms import OpenAI
+from langchain_community.utilities import SQLDatabase
+from langchain_community.llms import OpenAI
 from langchain_community.llms import OpenAI
 from langchain_experimental.sql import SQLDatabaseChain
 from langchain_core.prompts import PromptTemplate
@@ -921,23 +921,17 @@ def rag_test2(request):
 
 
 def rag_MCQ(request):
-    
     assessment_questions = AssessmentQuestion.objects.all()[:10]
-    
 
     if request.method == 'POST':
         user = request.user
         score = 0
         user_answers = []
-        #topic = request.POST.get('topic')
-        #assess_type = request.POST.get('assess_type')
+        incorrect_answers = {}
 
         # Calculate the total number of questions for the max score
         max_score = len(assessment_questions)
 
-        # Generate a unique assessment ID
-       
-        
         for question in assessment_questions:
             selected_option_key = f'selected_options_{question.id}'
             submitted_answer = request.POST.get(selected_option_key, None)
@@ -947,6 +941,10 @@ def rag_MCQ(request):
                 answer_status = True
             else:
                 answer_status = False
+                incorrect_answers[question.question] = {
+                    'submitted_answer': submitted_answer or "No answer",
+                    'correct_answer': question.answer
+                }
 
             # Collect user's answers and question details
             user_answers.append({
@@ -959,68 +957,78 @@ def rag_MCQ(request):
         # Convert the user answers to a JSON string
         result_details_json = json.dumps(user_answers)
 
-       
+        # Generate recommendations for incorrect answers
+        messages = []
+        for q, a in incorrect_answers.items():
+            default_message = f"Sorry, but your answer for question '{q}' was incorrect. The correct answer was '{a['correct_answer']}' whereas your answer was '{a['submitted_answer']}'."
+            messages.append(default_message)
 
-        return render(request, 'score.html', {
+        # Serialize the recommendation messages into JSON format
+        recommendation_message_json = json.dumps(messages)
+
+        return render(request, 'rag_score.html', {
             'score': score,
             'max_score': max_score,
             'user_answers': user_answers,
+            'incorrect_answers': incorrect_answers,
+            'recommendation_message': messages,
         })
-        
-    
+
     return render(request, 'rag_mcq.html', {'assessment_questions': assessment_questions})
 
+import json
+from django.shortcuts import render
+from django.contrib import messages
+from .models import AssessmentQuestion, AssessmentHistory
+
 def rag_TF(request):
-    # Fetch the True or False questions for display
-    true_false_questions = AssessmentQuestion.objects.all()[:10]  # Assuming TrueFalseQuestion is your model for True or False questions
-    
+    true_false_questions = AssessmentQuestion.objects.all()[:10]  # Fetch questions
     
     if request.method == 'POST':
         user = request.user
         score = 0
         max_score = len(true_false_questions)
         incorrect_answers = {}
-        submitted_answers = []
         user_answers = []
-        all_answered = True
 
         for question in true_false_questions:
             answer_key = f'answer_{question.id}'
             submitted_answer = request.POST.get(answer_key)
-            submitted_answers.append(submitted_answer)
-            correct_answer = question.answer.lower()  # Convert to lowercase for case-insensitive comparison
-            submitted_answer = submitted_answer.lower()# Convert to lowercase for case-insensitive comparison
+            if not submitted_answer:
+                messages.error(request, 'Please select one option for each question.')
+                return render(request, 'rag_TF.html', {'true_false_questions': true_false_questions})
+
+            correct_answer = question.answer.lower()
+            submitted_answer = submitted_answer.lower()
+
             if submitted_answer == correct_answer:
                 score += 1
             else:
-                # Store incorrect answers along with correct options
                 incorrect_answers[question.question] = {
                     'submitted_answer': submitted_answer,
                     'correct_answer': correct_answer,
                 }
-            question_data = {
+
+            user_answers.append({
                 'question': question.question,
                 'correct_answer': correct_answer,
                 'user_answer': submitted_answer if submitted_answer else "No answer"
-            }
-            user_answers.append(question_data)
-
-            if f'answer_{question.id}' not in request.POST or not request.POST.get(f'answer_{question.id}').strip():
-                all_answered = False
-                break
-
-        if not all_answered:
-            messages.error(request, 'Please select one option for each question.')
-            return render(request, 'true_n_false_interface.html', {
-                'true_false_questions': true_false_questions
             })
 
-        # Convert the user answers to a JSON string
         result_details_json = json.dumps(user_answers)
 
+        messages = []
+        for q, a in incorrect_answers.items():
+            default_message = f"Sorry, but your answer for question '{q}' was incorrect. The correct answer was '{a['correct_answer']}' whereas your answer was '{a['submitted_answer']}'."
+            messages.append(default_message)
 
-        # Render the score template with the score
-        return render(request, 'score.html', {'score': score, 'max_score': max_score, 'incorrect_answers': incorrect_answers})
+        return render(request, 'rag_score.html', {
+            'score': score,
+            'max_score': max_score,
+            'user_answers': user_answers,
+            'incorrect_answers': incorrect_answers,
+            'recommendation_message': messages,
+        })
 
     return render(request, 'rag_TF.html', {'true_false_questions': true_false_questions})
 

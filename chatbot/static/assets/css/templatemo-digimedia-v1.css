@@ -1087,7 +1087,7 @@ font-size: 24px;
 line-height: 117.7%;
 /* or 40px */
 
-color: #626262;
+color: #000;
 
 
 
@@ -1120,6 +1120,7 @@ About Style
   text-align: justify;
   width:80%;
   font-family: 'DM Sans', sans-serif;
+  color: #000;
 }
 .about-right-content img{
   height: 367px;
@@ -1883,7 +1884,7 @@ footer p a {
 
 
 .pfooter{
-  color: #5C5B5B;
+  color: #000;
   font-family:"DM Sans", sans-serif;
   font-size: 18px;
   margin-top:-85px;
