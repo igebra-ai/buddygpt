@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import DocumentForm
 from django.http import HttpResponse, JsonResponse
+import openai
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -24,11 +25,13 @@ from django.contrib.auth import authenticate, login, logout
 from . tokens import generate_token
 from langchain.utilities import SQLDatabase
 from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain_experimental.sql import SQLDatabaseChain
 from langchain_core.prompts import PromptTemplate
 from langchain.prompts import PromptTemplate
 from langchain.prompts.chat import HumanMessagePromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from django.utils.encoding import force_bytes
 try:
@@ -244,7 +247,7 @@ def home(request):
     return render(request,'home.html')
 
 def generate_assessment(message):
-    response = client.chat.completions.create(
+    response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a Multiple Choice Questions generator bot. Output should contain question, options and answer in a JSON format. The value for key 'options' should be a python list."},
@@ -325,7 +328,7 @@ def score_recommendation(message):
     system_message =  """
       You are a helpful academic score analyst. Your job is to analyze the questions with wrong response and give the approach to the correct solutions.
       """
-    response = client.chat.completions.create(
+    response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": system_message},
