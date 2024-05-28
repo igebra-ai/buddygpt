@@ -605,7 +605,7 @@ def rag_search(request):
         # Redirect the user to the login page, or return a suitable response
         return redirect('signin')
     # Retrieve all documents uploaded by the user
-    documents = Document.objects.all()
+    documents = Document.objects.filter(user=request.user)
 
     if request.method == 'POST':
         # Get the user's query and selected document ID from the form
@@ -689,7 +689,7 @@ def rag_test(request):
         # Redirect the user to the login page, or return a suitable response
         return redirect('signin')
     # Retrieve all documents uploaded by the user
-    documents = Document.objects.all()
+    documents = Document.objects.filter(user=request.user)
 
     if request.method == 'POST':
         # Get the user's query and selected document ID from the form
@@ -808,7 +808,7 @@ def rag_test2(request):
         # Redirect the user to the login page, or return a suitable response
         return redirect('signin')
     # Retrieve all documents uploaded by the user
-    documents = Document.objects.all()
+    documents = Document.objects.filter(user=request.user)
 
     if request.method == 'POST':
         # Get the user's query and selected document ID from the form
