@@ -574,14 +574,16 @@ def upload_document(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            document = form.save(commit=False)
+            document.user = request.user  # Associate the document with the current user
+            document.save()
             # Redirect to the same page to avoid form resubmission on refresh
             return redirect('upload_document')
     else:
         form = DocumentForm()
 
     # Fetch all uploaded documents
-    documents = Document.objects.all()
+    documents = Document.objects.filter(user=request.user)
 
     return render(request, 'upload_document.html', {'form': form, 'documents': documents})
 
