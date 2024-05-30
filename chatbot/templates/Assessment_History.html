@@ -175,6 +175,13 @@ Past Assessments
     justify-content: center; /* Aligns the button horizontally in the center */
     margin: 20px 0; /* Adds some space above and below the button */
   }
+
+  .formatted-response {
+            white-space: pre-wrap; /* This preserves whitespace and wraps text */
+            font-family: "poppins"; /* Set the font to match the rest of your page */
+            font-size: 14px; /* Adjust the font size to match the rest of your page */
+            line-height: 1.5; /* Adjust the line height for better readability */
+}
 </style>
 {% endblock %}
 
@@ -264,7 +271,7 @@ Past Assessments
       <div>
         <ul>
         {% for message in history.recommendation_message %}
-            <li><pre>{{ message }}</pre></li>
+            <li><pre class = "formatted-response">{{ message }}</pre></li>
         {% endfor %}
       </ul>
       </div>

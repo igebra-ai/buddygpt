@@ -258,6 +258,13 @@
   background-color: #dc3265; /* Dark baby pink color */
   border-color: #dc3265; /* Border color same as background color */
 }
+
+.formatted-response {
+            white-space: pre-wrap; /* This preserves whitespace and wraps text */
+            font-family: "poppins"; /* Set the font to match the rest of your page */
+            font-size: 14px; /* Adjust the font size to match the rest of your page */
+            line-height: 1.5; /* Adjust the line height for better readability */
+}
 </style>
 
 {% endblock %}
@@ -291,7 +298,7 @@
       <h3 style="font-size: 19px;">Recommendations:</h3>
       <ul>
         {% for msg in recommendation_message %}
-        <li>{{ msg }}</li>
+        <li><pre class = "formatted-response">{{ msg }}</pre></li>
         {% endfor %}
       </ul>
       <!-- Displaying Recommendation above -->

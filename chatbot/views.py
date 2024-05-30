@@ -338,6 +338,9 @@ def assessment(request):
 def score_recommendation(message):
     system_message =  """
       You are a helpful academic score analyst. Your job is to analyze the questions with wrong response and give the approach to the correct solutions.
+      Your response should be in the format:
+      Question: #display the incorrectly asnwered question here
+      Explanation for the correct answer: #Justify, why the correct answer is the correct answer 
       """
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -404,7 +407,7 @@ def interface(request):
         # Generate recommendation for the wrong responses
         messages = []
         for q, a in incorrect_answers.items():
-            default_message = f"Sorry, but your answer for question '{q}' was incorrect. The correct answer was '{a['correct_answer']}' whereas your answer was '{a['submitted_answer']}'."
+            default_message = f"The submitted answer for question '{q}' is incorrect. The correct answer is '{a['correct_answer']}' whereas the submitted answer OR the incorrect answer was '{a['submitted_answer']}'."
             default_response = score_recommendation(default_message)
             messages.append(default_response)
 
