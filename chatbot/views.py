@@ -5,7 +5,7 @@ import openai
 from openai import OpenAI
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .models import AssessmentQuestion, AssessmentHistory, Document, AssessmentSubject, AssessmentTopic, AssessmentFormat,Question,Answer
+from .models import AssessmentQuestion, AssessmentHistory, Document, AssessmentSubject, AssessmentTopic, AssessmentFormat,Question,Answer, QuestionBank
 from django.shortcuts import render
 from django.http import JsonResponse
 import os
@@ -319,6 +319,17 @@ def assessment(request):
                 answer=Answer,
             )
             assessment_question.save()
+
+            # Create and save the QuestionBank object
+            question_bank = QuestionBank.objects.create(
+                num_questions=len(questions_data),
+                subject=subject,
+                topic=topic,
+                question=Question,
+                options=Options,
+                answer=Answer
+            )
+            question_bank.save()
 
         return JsonResponse({'message': message, 'response': response, 'subject': subject, 'topic': topic, 'format': assess_type})
 

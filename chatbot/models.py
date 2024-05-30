@@ -22,7 +22,6 @@ class AssessmentTopic(models.Model):
 
 class AssessmentFormat(models.Model):
     format = models.CharField(max_length=255)   
- 
 
 class AssessmentHistory(models.Model):
     assessment_id = models.CharField(max_length=255, primary_key=True)
@@ -89,3 +88,10 @@ class Answer(models.Model):
     def __str__(self):
         return self.text
 
+class QuestionBank(models.Model):
+    num_questions = models.IntegerField()
+    subject = models.CharField(max_length=255)
+    topic = models.CharField(max_length=255)
+    question = models.TextField()
+    options = models.JSONField()
+    answer = models.CharField(max_length=255)
