@@ -1290,7 +1290,7 @@ def openai_recommendation(query: str):
       system_message =  """
       You are a helpful academic score analyst.Analyze the test scores from result_details to give tips, and solutions based on the submitted wrong response, weak topics or subjects GROUPED BY assessment_id and provide them with valuable recommendations on how they can improve their scores.
       Your response should be in the following format:
-      Recommendation: #your response should be overall/generic recommendations on how to understand the concepts/topics in a better way based on the overall summary of the data you will recieve from results_detials.
+      Recommendation: #your response should be technqiues to improve the score, performance or how to understand the concept in a better way based on the data your recieved from results_detials.
       """
       
       human_qry_template = HumanMessagePromptTemplate.from_template(
@@ -1340,7 +1340,7 @@ def recommend(request):
 
         try:
             # Construct a default message for recommendation specific to the current subject
-            default_message = f"For the assessment_id starting with {request.user}-, Provide the recommendations for the subject {subject}"
+            default_message = f"For the assessment_id starting with {request.user}, Provide the recommendations for the subject {subject}"
 
             # Generate recommendations based on the default message
             default_response = openai_recommendation(default_message)
