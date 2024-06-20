@@ -357,7 +357,7 @@ def score_recommendation(message):
 import json
 
 def interface(request):
-    assessment_questions = AssessmentQuestion.objects.all()[:10]
+    assessment_questions = AssessmentQuestion.objects.all()[:20]
     assessment_subject = AssessmentSubject.objects.first()
     assessment_topic = AssessmentTopic.objects.first()
     assessment_format = AssessmentFormat.objects.last()
