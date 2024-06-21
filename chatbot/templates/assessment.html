@@ -173,7 +173,7 @@ AI-Assessments
       <div class="vertical-center">
         <h2><strong>Assessment Generator</strong></h2>
         <br>
-        <form class="message-form">
+        <form id="assessmentForm" class="message-form" action="{% url 'interface' %}" method="post">
           {% csrf_token %}
           <!--Grade Added-->
           <div class="form-group">
@@ -318,8 +318,12 @@ AI-Assessments
     })
       .then(response => response.json())
       .then(data => {
-        const response = data.response;
-        window.location.href = assessmentUrl + '?assessment_data=' + encodeURIComponent(response);
+        // Store the response in session storage
+        sessionStorage.setItem('assessment_data', JSON.stringify(data));
+
+        // Redirect to the appropriate interface
+        window.location.href = assessmentUrl;
+        
         const messageItem = document.createElement('li');
         messageItem.classList.add('message', 'received');
         messageItem.innerHTML = ``;
@@ -329,7 +333,7 @@ AI-Assessments
         loadingIndicator.style.display = 'none';
       });
   });
-
 </script>
+
 
 {% endblock %}

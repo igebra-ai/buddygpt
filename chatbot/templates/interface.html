@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title%}
+{% block title %}
 AI Generated Assessments
-{% endblock%}
+{% endblock %}
 
 {% block styles %}
 <style>
@@ -13,7 +13,7 @@ AI Generated Assessments
     font-family: 'Arial', sans-serif;
   }
 
-  .main-container{
+  .main-container {
     display: flex;
   }
   /* Flexbox Container */
@@ -28,8 +28,8 @@ AI Generated Assessments
     padding-bottom: 55px;
   }
 
-   /* Card Styles */
-   .card {
+  /* Card Styles */
+  .card {
     width: 110%; /* Ensure card fills its container */
     max-width: 110%; /* Prevent card from exceeding container width */
   }
@@ -40,7 +40,6 @@ AI Generated Assessments
     box-shadow: 0 0px 10px rgba(0, 0, 0, 0.5);
     font-family: 'poppins', sans-serif;
     border-radius: 5px;
-    /* Your existing card-body styles */
   }
 
   .list-group-item {
@@ -51,15 +50,14 @@ AI Generated Assessments
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, .125);
     box-shadow: 0 1px 4px darkgrey;
-    /* Your existing list-group-item styles */
   }
 
   .list-group-item:hover {
     background-color: #ededed;
     border: 1px solid rgba(255, 255, 255, 0.811);
     box-shadow: 0 1px 4px rgba(178, 178, 178, 0.947);
-    /* Your existing hover styles */
   }
+
   .btn-primary {
     background-color: #dc3265; /* Dark baby pink color */
     border-color: #dc3265; /* Border color same as background color */
@@ -70,13 +68,10 @@ AI Generated Assessments
     background-color: #af0d3e; /* Darker shade of pink on hover */
     border-color: #af0d3e; /* Border color changes on hover */
   }
-  
 </style>
 {% endblock %}
 
-
 {% block content %}
-
 <div class="main-container">
   {% include 'sidebar.html' %}
 </div>
@@ -85,32 +80,7 @@ AI Generated Assessments
   <hr>
   <form method="post" id="assessmentForm">
     {% csrf_token %}
-    {% for question in assessment_questions %}
-    <!-- Hidden input fields to store subject, topic, and type -->
-    <input type="hidden" name="subject" value="{{ subject }}">
-    <input type="hidden" name="topic" value="{{ topic }}">
-    <input type="hidden" name="assess_type" value="{{ assess_type }}">
-    
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Question {{forloop.counter}}</h5>
-        <p class="card-text">{{ question.question }}</p>
-        <h5 class="card-title">Options:</h5>
-        <ul class="list-group">
-          
-          <!--Problematic part starts-->
-          {% for option in question.options %}
-          <li class="list-group-item">
-            <input type="radio" name="selected_options_{{ question.id }}" value="{{ option }}" id="option_{{ question.id }}_{{ forloop.counter }}">
-            <label for="option_{{ question.id }}_{{ forloop.counter }}">{{ option }}</label>
-          </li>
-          {% endfor %}
-          <!--Problematic part ends-->
-
-        </ul>
-      </div>
-    </div>
-    {% endfor %}
+    <div id="questions-container"></div>
     <button type="submit" class="btn btn-primary">Submit</button>
     {% if messages %}
       <div class="messages">
@@ -120,11 +90,67 @@ AI Generated Assessments
       </div>
     {% endif %}
   </form>
-
-  
 </div>
 
+<script>
+  window.onload = function() {
+    const assessmentData = JSON.parse(sessionStorage.getItem('assessment_data'));
+    if (assessmentData) {
+      const questionsContainer = document.getElementById('questions-container');
+      const { message, response, subject, topic, format } = assessmentData;
 
+      const questionsData = JSON.parse(response).questions;
 
-
+      questionsData.forEach((questionData, index) => {
+        const questionElement = document.createElement('div');
+        questionElement.classList.add('card', 'mb-4');
+        
+        const cardBody = document.createElement('div');
+        cardBody.classList.add('card-body');
+        
+        const questionTitle = document.createElement('h5');
+        questionTitle.classList.add('card-title');
+        questionTitle.textContent = `Question ${index + 1}`;
+        
+        const questionText = document.createElement('p');
+        questionText.classList.add('card-text');
+        questionText.textContent = questionData.question;
+        
+        const optionsTitle = document.createElement('h5');
+        optionsTitle.classList.add('card-title');
+        optionsTitle.textContent = 'Options:';
+        
+        const optionsList = document.createElement('ul');
+        optionsList.classList.add('list-group');
+        
+        questionData.options.forEach((option, optionIndex) => {
+          const optionItem = document.createElement('li');
+          optionItem.classList.add('list-group-item');
+          
+          const optionInput = document.createElement('input');
+          optionInput.type = 'radio';
+          optionInput.name = `selected_options_${index}`;
+          optionInput.value = option;
+          optionInput.id = `option_${index}_${optionIndex}`;
+          
+          const optionLabel = document.createElement('label');
+          optionLabel.htmlFor = `option_${index}_${optionIndex}`;
+          optionLabel.textContent = option;
+          
+          optionItem.appendChild(optionInput);
+          optionItem.appendChild(optionLabel);
+          optionsList.appendChild(optionItem);
+        });
+        
+        cardBody.appendChild(questionTitle);
+        cardBody.appendChild(questionText);
+        cardBody.appendChild(optionsTitle);
+        cardBody.appendChild(optionsList);
+        questionElement.appendChild(cardBody);
+        
+        questionsContainer.appendChild(questionElement);
+      });
+    }
+  }
+</script>
 {% endblock %}
