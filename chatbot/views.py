@@ -266,10 +266,14 @@ def assessment(request):
         # Redirect the user to the login page, or return a suitable response
         return redirect('signin')
     if request.method == 'POST':
+        user = User.objects.get(id=request.user.id)
         message = request.POST.get('message')
         subject = request.POST.get('subject')
         topic = request.POST.get('topic')
         assess_type = request.POST.get('type')
+        # Generate a unique assessment ID
+        last_assessment_number = QuestionBank.objects.filter(user=user).values('assessment_id').distinct().count()
+        assessment_id = f"{user.username}-{last_assessment_number + 1}"
 
         response = generate_assessment(message)
 
@@ -327,7 +331,9 @@ def assessment(request):
                 topic=topic,
                 question=Question,
                 options=Options,
-                answer=Answer
+                answer=Answer,
+                user=user,
+                assessment_id=assessment_id
             )
             question_bank.save()
 

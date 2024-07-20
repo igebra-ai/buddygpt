@@ -89,9 +89,11 @@ class Answer(models.Model):
         return self.text
 
 class QuestionBank(models.Model):
+    assessment_id = models.CharField(max_length=255, null=True, blank=True)
     num_questions = models.IntegerField()
     subject = models.CharField(max_length=255)
     topic = models.CharField(max_length=255)
     question = models.TextField()
     options = models.JSONField()
     answer = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
